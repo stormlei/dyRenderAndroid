@@ -25,7 +25,6 @@ import com.qpsoft.checkrender.databinding.FragmentMainBinding
 import com.qpsoft.checkrender.utils.glide.GlideEngine
 import dagger.hilt.android.AndroidEntryPoint
 import org.json.JSONObject
-import kotlin.random.Random
 
 
 @AndroidEntryPoint
@@ -51,7 +50,7 @@ class MainFragment : Fragment() {
         return binding.root
     }
 
-    private val comboItem = "裸眼视力"
+    private val comboItem = "完全矫正视力"
     private var comboItemList = mutableListOf<ComboItem>()
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -83,21 +82,21 @@ class MainFragment : Fragment() {
 
         var pos = -1
         for (item in itemList) {
-            if (item.type == "vision") {
+            if (item.type == "vision" || item.type == "sph" || item.type == "cyl" || item.type == "axis" || item.type == "iop") {
                 val itemView: View
                 if (item.doubleEye) {
-                    itemView = layoutInflater.inflate(R.layout.view_item_odos, null)
+                    itemView = layoutInflater.inflate(R.layout.view_spe_odos, null)
                     val tvNameOd = itemView.findViewById<TextView>(R.id.tv_name_od)
                     val tvNameOs = itemView.findViewById<TextView>(R.id.tv_name_os)
                     tvNameOd.text = item.name
                     tvNameOs.text = item.name
 
-                    val edtOd = itemView.findViewById<EditText>(R.id.edt_od)
-                    val edtOs = itemView.findViewById<EditText>(R.id.edt_os)
-                    edtOd.tag = item.item+item.key+"od"
-                    edtOs.tag = item.item+item.key+"os"
+                    val edtValueOd = itemView.findViewById<EditText>(R.id.edt_value_od)
+                    val edtValueOs = itemView.findViewById<EditText>(R.id.edt_value_os)
+                    edtValueOd.tag = item.item+item.key+"od"
+                    edtValueOs.tag = item.item+item.key+"os"
                 } else {
-                    itemView = layoutInflater.inflate(R.layout.view_item_no_odos, null)
+                    itemView = layoutInflater.inflate(R.layout.view_spe_no_odos, null)
                     val tvName = itemView.findViewById<TextView>(R.id.tv_name)
                     tvName.text = item.name
 
@@ -283,17 +282,17 @@ class MainFragment : Fragment() {
         val comboItem = list.find { it.name == comboItem } ?: return
         val itemList = comboItem.items
         for (item in itemList) {
-            if (item.type == "vision"){
+            if (item.type == "vision" || item.type == "sph" || item.type == "cyl" || item.type == "axis" || item.type == "iop"){
                 if (item.doubleEye) {
-                    val tvOd = binding.rootView.findViewWithTag(item.item+item.key+"od") as EditText
-                    val tvOs = binding.rootView.findViewWithTag(item.item+item.key+"os") as EditText
+                    val edtValueOd = binding.rootView.findViewWithTag(item.item+item.key+"od") as EditText
+                    val edtValueOs = binding.rootView.findViewWithTag(item.item+item.key+"os") as EditText
                     val ods = JSONObject()
-                    ods.put("od", tvOd.text.toString())
-                    ods.put("os", tvOs.text.toString())
+                    ods.put("od", edtValueOd.text.toString())
+                    ods.put("os", edtValueOs.text.toString())
                     dataObj.put(item.key, ods)
                 } else {
-                    val tvValue = binding.rootView.findViewWithTag(item.item+item.key) as EditText
-                    dataObj.put(item.key, tvValue.text.toString())
+                    val edtValue = binding.rootView.findViewWithTag(item.item+item.key) as EditText
+                    dataObj.put(item.key, edtValue.text.toString())
                 }
             }
             if (item.type == "radio"){
