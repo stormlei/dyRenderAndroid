@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="DesignSurface">
+    <option name="filePathToZoomLevelMap">
+      <map>
+        <entry key="../../.gradle/caches/transforms-3/18c946a6b4293d902210f3843133e3ab/transformed/jetified-pictureselector-v2.7.3-rc06/res/drawable/picture_image_placeholder.xml" value="0.265625" />
+        <entry key="app/src/main/res/drawable/bg_0ff_halfr12_shape.xml" value="0.20833333333333334" />
+        <entry key="app/src/main/res/drawable/bg_bfd_half_r12_shape.xml" value="0.20833333333333334" />
+        <entry key="app/src/main/res/drawable/bg_bfd_topright_r12_shape.xml" value="0.20833333333333334" />
+        <entry key="app/src/main/res/drawable/bg_e6_r12_shape.xml" value="0.33489583333333334" />
+        <entry key="app/src/main/res/layout/activity_main.xml" value="0.3640625" />
+        <entry key="app/src/main/res/layout/footer_up_files.xml" value="0.29583333333333334" />
+        <entry key="app/src/main/res/layout/fragment_main.xml" value="0.3640625" />
+        <entry key="app/src/main/res/layout/rv_files_item.xml" value="0.24947916666666667" />
+        <entry key="app/src/main/res/layout/view_array_no_odos.xml" value="0.29583333333333334" />
+        <entry key="app/src/main/res/layout/view_array_select_no_odos.xml" value="0.3333333333333333" />
+        <entry key="app/src/main/res/layout/view_files.xml" value="0.3640625" />
+        <entry key="app/src/main/res/layout/view_item_files.xml" value="0.25" />
+        <entry key="app/src/main/res/layout/view_item_no_odos.xml" value="0.28802083333333334" />
+        <entry key="app/src/main/res/layout/view_item_odos.xml" value="0.28802083333333334" />
+        <entry key="app/src/main/res/layout/view_item_textarea.xml" value="0.2640625" />
+        <entry key="app/src/main/res/layout/view_no_odos.xml" value="0.28802083333333334" />
+        <entry key="app/src/main/res/layout/view_odos.xml" value="0.28802083333333334" />
+        <entry key="app/src/main/res/layout/view_radio_no_odos.xml" value="0.3640625" />
+        <entry key="app/src/main/res/layout/view_rb.xml" value="0.3640625" />
+        <entry key="app/src/main/res/layout/view_remark.xml" value="0.3640625" />
+        <entry key="app/src/main/res/layout/view_select_no_odos.xml" value="0.33" />
+        <entry key="app/src/main/res/layout/view_suffix_radio_no_odos.xml" value="0.3333333333333333" />
+        <entry key="app/src/main/res/layout/view_template_no_odos.xml" value="0.309375" />
+        <entry key="app/src/main/res/layout/view_text_no_odos.xml" value="0.3333333333333333" />
+        <entry key="app/src/main/res/layout/view_textarea.xml" value="0.29322916666666665" />
+        <entry key="app/src/main/res/layout/view_up_files.xml" value="0.24947916666666667" />
+      </map>
+    </option>
+  </component>
+  <component name="ProjectRootManager" version="2" languageLevel="JDK_11" default="true" project-jdk-name="11" project-jdk-type="JavaSDK">
+    <output url="file://$PROJECT_DIR$/build/classes" />
+  </component>
+  <component name="ProjectType">
+    <option name="id" value="Android" />
+  </component>
+</project>
