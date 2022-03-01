@@ -20,7 +20,7 @@
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
                 android:textSize="17sp"
-                android:text="眼压"/>
+                android:text="展示"/>
 
             <Button
                 android:id="@+id/submit"

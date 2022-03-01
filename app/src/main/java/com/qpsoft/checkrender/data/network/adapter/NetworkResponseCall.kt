@@ -2,6 +2,7 @@ package com.qpsoft.checkrender.data.network.adapter
 
 import com.blankj.utilcode.util.LogUtils
 import com.blankj.utilcode.util.ToastUtils
+import com.google.gson.JsonSyntaxException
 import com.qpsoft.checkrender.data.model.SimpleError
 import com.qpsoft.checkrender.utils.Convert
 import okhttp3.Request
@@ -93,6 +94,10 @@ internal class NetworkResponseCall<S : Any, E : Any>(
                     is IOException -> {
                         ToastUtils.showShort("请检查网络连接")
                         NetworkResponse.NetworkError(throwable)
+                    }
+                    is JsonSyntaxException -> {
+                        ToastUtils.showShort("Json语法异常")
+                        NetworkResponse.UnknownError(throwable)
                     }
                     else -> {
                         ToastUtils.showShort("服务器错误，请联系管理员")

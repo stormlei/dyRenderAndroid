@@ -14,14 +14,17 @@ import androidx.recyclerview.widget.RecyclerView
 import com.afollestad.materialdialogs.MaterialDialog
 import com.afollestad.materialdialogs.lifecycle.lifecycleOwner
 import com.afollestad.materialdialogs.list.listItems
+import com.blankj.utilcode.util.GsonUtils
 import com.blankj.utilcode.util.LogUtils
 import com.chad.library.adapter.base.BaseQuickAdapter
 import com.chad.library.adapter.base.viewholder.BaseViewHolder
+import com.google.gson.reflect.TypeToken
 import com.luck.picture.lib.PictureSelector
 import com.luck.picture.lib.config.PictureConfig
 import com.luck.picture.lib.config.PictureMimeType
 import com.qpsoft.checkrender.R
 import com.qpsoft.checkrender.common.Helper
+import com.qpsoft.checkrender.data.model.CheckItem
 import com.qpsoft.checkrender.data.model.ComboItem
 import com.qpsoft.checkrender.databinding.FooterUpFilesBinding
 import com.qpsoft.checkrender.databinding.FragmentMainBinding
@@ -53,7 +56,7 @@ class MainFragment : Fragment() {
         return binding.root
     }
 
-    private val comboItem = "主诉"
+
     private var comboItemList = mutableListOf<ComboItem>()
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -68,9 +71,57 @@ class MainFragment : Fragment() {
     }
 
 
-
+    private val comboItem = "角膜接触镜试戴"
     private fun renderUI(list: MutableList<ComboItem>) {
         val comboItem = list.find { it.name == comboItem } ?: return
+        when(comboItem.category) {
+            "normal" -> showNormal(comboItem)
+            "ok" -> showOk(comboItem)
+            "special" -> showSpecial(comboItem)
+        }
+        if (comboItem.fileModule) {
+            val childView = layoutInflater.inflate(R.layout.view_files, binding.rootView, false)
+            binding.rootView.addView(childView)
+
+            val picList = mutableListOf<String>()
+            picList.add("ddddddd")
+            val picAdapter = object: BaseQuickAdapter<String, BaseViewHolder>(R.layout.rv_files_item, picList) {
+                override fun convert(holder: BaseViewHolder, item: String) {
+                    val ivFile = holder.getView<ImageView>(R.id.iv_file)
+                    Helper.loadFile(ivFile, item)
+                }
+            }
+            val rvFiles = childView.findViewById<RecyclerView>(R.id.rv_files)
+            rvFiles.layoutManager = GridLayoutManager(requireContext(), 3, RecyclerView.VERTICAL, false)
+            rvFiles.adapter = picAdapter
+
+            //footer layout
+            val footerView = layoutInflater.inflate(R.layout.footer_up_files, binding.rootView, false)
+            picAdapter.setFooterView(footerView)
+            val footerUpFilesBinding = DataBindingUtil.bind<FooterUpFilesBinding>(footerView)!!
+            footerUpFilesBinding.ivUpFiles.setOnClickListener {
+                //cameraRequester.launch()
+                PictureSelector.create(this@MainFragment)
+                    .openGallery(PictureMimeType.ofImage())
+                    .setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE)
+                    .imageEngine(GlideEngine.createGlideEngine())
+                    .maxSelectNum(1)
+                    .isCompress(true)
+                    .isEnableCrop(false)
+                    .forResult(PictureConfig.CHOOSE_REQUEST)
+            }
+        }
+        if (comboItem.resultModule) {
+            val childView = layoutInflater.inflate(R.layout.view_result, binding.rootView, false)
+            binding.rootView.addView(childView)
+        }
+        if (comboItem.remarkModule) {
+            val childView = layoutInflater.inflate(R.layout.view_remark, binding.rootView, false)
+            binding.rootView.addView(childView)
+        }
+    }
+
+    private fun showNormal(comboItem: ComboItem) {
         val showEyes: Boolean = comboItem.doubleEye
         val itemList = comboItem.items
 
@@ -168,16 +219,17 @@ class MainFragment : Fragment() {
                 val iList = item.itemList
                 if (iList != null) {
                     for(it in iList) {
-                        if (it.type == "select") {
+                        val tt = GsonUtils.fromJson(GsonUtils.toJson(it), CheckItem::class.java)
+                        if (tt.type == "select") {
                             val sView = layoutInflater.inflate(R.layout.view_array_select_no_odos, null)
                             val tvName = sView.findViewById<TextView>(R.id.tv_name)
-                            tvName.text = it.name
+                            tvName.text = tt.name
                             arrayView.addView(sView)
                         }
-                        if (it.type == "template") {
+                        if (tt.type == "template") {
                             val sView = layoutInflater.inflate(R.layout.view_array_select_no_odos, null)
                             val tvName = sView.findViewById<TextView>(R.id.tv_name)
-                            tvName.text = it.name
+                            tvName.text = tt.name
                             arrayView.addView(sView)
                         }
                     }
@@ -306,47 +358,87 @@ class MainFragment : Fragment() {
         }
 
         binding.rootView.addView(childView)
+    }
 
-        if (comboItem.fileModule) {
-            val childView = layoutInflater.inflate(R.layout.view_files, binding.rootView, false)
-            binding.rootView.addView(childView)
 
-            val picList = mutableListOf<String>()
-            picList.add("ddddddd")
-            val picAdapter = object: BaseQuickAdapter<String, BaseViewHolder>(R.layout.rv_files_item, picList) {
-                override fun convert(holder: BaseViewHolder, item: String) {
-                    val ivFile = holder.getView<ImageView>(R.id.iv_file)
-                    Helper.loadFile(ivFile, item)
+    private fun showOk(comboItem: ComboItem) {
+        val childView = layoutInflater.inflate(R.layout.view_no_odos, binding.rootView, false) as LinearLayout
+
+        val itemList = comboItem.items
+        var pos = -1
+        for (item in itemList) {
+            if (item.type == "radio") {
+                val itemView = layoutInflater.inflate(R.layout.view_radio_no_odos, null)
+                val tvName = itemView.findViewById<TextView>(R.id.tv_name)
+                tvName.text = item.name
+                val rgView = itemView.findViewById<RadioGroup>(R.id.rg)
+
+                for (str in item.optionList!!) {
+                    val radioBtn = RadioButton(context)
+                    radioBtn.text = str
+                    rgView.addView(radioBtn)
+
+                    radioBtn.setOnClickListener {
+                        val topView = layoutInflater.inflate(R.layout.view_ok_top_odos, null) as LinearLayout
+                        //val tvTitle = topView.findViewById<TextView>(R.id.tv_title)
+                        //tvTitle.text = str
+                        childView.addView(topView)
+                        val iList = item.itemList
+                        if (iList != null) {
+                            for(ii in iList) {
+                                val list = ii as MutableList<Any>
+                                for (it in list) {
+                                    val item = GsonUtils.fromJson(GsonUtils.toJson(it), CheckItem::class.java)
+                                    if (str == item.item) {
+                                        if (item.type == "text") {
+                                            val itemView: View
+                                            if (item.doubleEye) {
+                                                itemView = layoutInflater.inflate(R.layout.view_text_odos, null)
+                                                val tvNameOd = itemView.findViewById<TextView>(R.id.tv_name_od)
+                                                val tvNameOs = itemView.findViewById<TextView>(R.id.tv_name_os)
+                                                tvNameOd.text = item.name
+                                                tvNameOs.text = item.name
+
+                                                val edtValueOd = itemView.findViewById<EditText>(R.id.edt_value_od)
+                                                val edtValueOs = itemView.findViewById<EditText>(R.id.edt_value_os)
+                                                edtValueOd.tag = item.item + item.key + "od"
+                                                edtValueOs.tag = item.item + item.key + "os"
+                                            } else {
+                                                itemView = layoutInflater.inflate(R.layout.view_text_no_odos, null)
+                                                val tvName = itemView.findViewById<TextView>(R.id.tv_name)
+                                                tvName.text = item.name
+
+                                                val edtValue = itemView.findViewById<EditText>(R.id.edt_value)
+                                                edtValue.tag = item.item + item.key
+                                            }
+
+                                            topView.addView(itemView)
+                                            pos++
+                                            if (pos % 2 == 0) {
+                                                itemView.setBackgroundColor(resources.getColor(R.color.color_0ff))
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+                rgView.tag = item.item + item.key
+
+                childView.addView(itemView)
+                pos++
+                if (pos % 2 != 0) {
+                    itemView.setBackgroundColor(resources.getColor(R.color.color_0ff))
                 }
             }
-            val rvFiles = childView.findViewById<RecyclerView>(R.id.rv_files)
-            rvFiles.layoutManager = GridLayoutManager(requireContext(), 3, RecyclerView.VERTICAL, false)
-            rvFiles.adapter = picAdapter
+        }
 
-            //footer layout
-            val footerView = layoutInflater.inflate(R.layout.footer_up_files, binding.rootView, false)
-            picAdapter.setFooterView(footerView)
-            val footerUpFilesBinding = DataBindingUtil.bind<FooterUpFilesBinding>(footerView)!!
-            footerUpFilesBinding.ivUpFiles.setOnClickListener {
-                //cameraRequester.launch()
-                PictureSelector.create(this@MainFragment)
-                    .openGallery(PictureMimeType.ofImage())
-                    .setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE)
-                    .imageEngine(GlideEngine.createGlideEngine())
-                    .maxSelectNum(1)
-                    .isCompress(true)
-                    .isEnableCrop(false)
-                    .forResult(PictureConfig.CHOOSE_REQUEST)
-            }
-        }
-        if (comboItem.resultModule) {
-            val childView = layoutInflater.inflate(R.layout.view_result, binding.rootView, false)
-            binding.rootView.addView(childView)
-        }
-        if (comboItem.remarkModule) {
-            val childView = layoutInflater.inflate(R.layout.view_remark, binding.rootView, false)
-            binding.rootView.addView(childView)
-        }
+        binding.rootView.addView(childView)
+    }
+
+    private fun showSpecial(comboItem: ComboItem) {
+
     }
 
 
@@ -385,6 +477,10 @@ class MainFragment : Fragment() {
                     val rgValue = binding.rootView.findViewWithTag(item.item + item.key) as RadioGroup
                     val rbValue = rgValue.findViewById<RadioButton>(rgValue.checkedRadioButtonId)
                     dataObj.put(item.key, rbValue?.text?.toString() ?: "")
+
+                    if (item.itemList != null) {
+
+                    }
                 }
             }
             if (item.type == "text"){

@@ -21,6 +21,7 @@
         <entry key="app/src/main/res/layout/view_item_textarea.xml" value="0.2640625" />
         <entry key="app/src/main/res/layout/view_no_odos.xml" value="0.28802083333333334" />
         <entry key="app/src/main/res/layout/view_odos.xml" value="0.28802083333333334" />
+        <entry key="app/src/main/res/layout/view_ok_top_odos.xml" value="0.30364583333333334" />
         <entry key="app/src/main/res/layout/view_radio_no_odos.xml" value="0.3640625" />
         <entry key="app/src/main/res/layout/view_radio_odos.xml" value="0.290625" />
         <entry key="app/src/main/res/layout/view_rb.xml" value="0.3640625" />
