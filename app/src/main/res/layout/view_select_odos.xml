@@ -10,52 +10,62 @@
         android:layout_height="wrap_content"
         android:orientation="horizontal"
         android:padding="16dp">
-
-        <LinearLayout
+        <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:paddingEnd="16dp"
             android:layout_weight="1">
             <TextView
                 android:id="@+id/tv_name_od"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_centerVertical="true"
                 android:textColor="@color/black"
                 android:textSize="17sp"
                 android:text="xx"/>
-            <EditText
-                android:id="@+id/edt_value_od"
+
+            <TextView
+                android:id="@+id/tv_value_od"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:background="@null"
-                android:hint="请输入"
-                android:paddingStart="16dp"
+                android:layout_alignParentEnd="true"
+                android:layout_centerVertical="true"
+                android:gravity="end"
                 android:textColor="@color/black"
                 android:textSize="17sp"
-                android:text=""/>
-        </LinearLayout>
-
-        <LinearLayout
+                android:drawableEnd="@drawable/picture_icon_back_arrow"
+                android:drawablePadding="6dp"
+                />
+        </RelativeLayout>
+        <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:paddingEnd="16dp"
             android:layout_weight="1">
             <TextView
                 android:id="@+id/tv_name_os"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_centerVertical="true"
                 android:textColor="@color/black"
                 android:textSize="17sp"
                 android:text="xx"/>
-            <EditText
-                android:id="@+id/edt_value_os"
+
+            <TextView
+                android:id="@+id/tv_value_os"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:hint="请输入"
-                android:paddingStart="16dp"
-                android:background="@null"
+                android:layout_alignParentEnd="true"
+                android:layout_centerVertical="true"
+                android:gravity="end"
                 android:textColor="@color/black"
                 android:textSize="17sp"
-                android:text=""/>
-        </LinearLayout>
-
+                android:drawableEnd="@drawable/picture_icon_back_arrow"
+                android:drawablePadding="6dp"
+                />
+        </RelativeLayout>
     </LinearLayout>
+
+
+
 </layout>

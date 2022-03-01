@@ -11,6 +11,9 @@ import androidx.fragment.app.Fragment
 import androidx.databinding.DataBindingUtil
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.afollestad.materialdialogs.MaterialDialog
+import com.afollestad.materialdialogs.lifecycle.lifecycleOwner
+import com.afollestad.materialdialogs.list.listItems
 import com.blankj.utilcode.util.LogUtils
 import com.chad.library.adapter.base.BaseQuickAdapter
 import com.chad.library.adapter.base.viewholder.BaseViewHolder
@@ -50,7 +53,7 @@ class MainFragment : Fragment() {
         return binding.root
     }
 
-    private val comboItem = "裂隙灯检查"
+    private val comboItem = "主诉"
     private var comboItemList = mutableListOf<ComboItem>()
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -83,7 +86,7 @@ class MainFragment : Fragment() {
         var pos = -1
         for (item in itemList) {
             if (item.type == "vision" || item.type == "sph" || item.type == "cyl" || item.type == "axis"
-                || item.type == "iop" || item.type == "pd" || item.type == "add") {
+                || item.type == "iop" || item.type == "pd" || item.type == "add" || item.type == "al") {
                 val itemView: View
                 if (item.doubleEye) {
                     itemView = layoutInflater.inflate(R.layout.view_spe_odos, null)
@@ -126,7 +129,7 @@ class MainFragment : Fragment() {
                         radioBtn.text = str
                         rgOdView.addView(radioBtn)
                     }
-                    rgOdView.tag = item.item + item.key
+                    rgOdView.tag = item.item + item.key+"od"
 
                     val rgOsView = itemView.findViewById<RadioGroup>(R.id.rg_os)
                     for (str in item.optionList!!) {
@@ -134,7 +137,7 @@ class MainFragment : Fragment() {
                         radioBtn.text = str
                         rgOsView.addView(radioBtn)
                     }
-                    rgOsView.tag = item.item + item.key
+                    rgOsView.tag = item.item + item.key+"os"
                 } else {
                     itemView = layoutInflater.inflate(R.layout.view_radio_no_odos, null)
                     val tvName = itemView.findViewById<TextView>(R.id.tv_name)
@@ -205,12 +208,26 @@ class MainFragment : Fragment() {
             }
 
             if (item.type == "text") {
-                val itemView = layoutInflater.inflate(R.layout.view_text_no_odos, null)
-                val tvName = itemView.findViewById<TextView>(R.id.tv_name)
-                tvName.text = item.name
+                val itemView: View
+                if (item.doubleEye) {
+                    itemView = layoutInflater.inflate(R.layout.view_text_odos, null)
+                    val tvNameOd = itemView.findViewById<TextView>(R.id.tv_name_od)
+                    val tvNameOs = itemView.findViewById<TextView>(R.id.tv_name_os)
+                    tvNameOd.text = item.name
+                    tvNameOs.text = item.name
 
-                val edtValue = itemView.findViewById<EditText>(R.id.edt_value)
-                edtValue.tag = item.item+item.key
+                    val edtValueOd = itemView.findViewById<EditText>(R.id.edt_value_od)
+                    val edtValueOs = itemView.findViewById<EditText>(R.id.edt_value_os)
+                    edtValueOd.tag = item.item+item.key+"od"
+                    edtValueOs.tag = item.item+item.key+"os"
+                } else {
+                    itemView = layoutInflater.inflate(R.layout.view_text_no_odos, null)
+                    val tvName = itemView.findViewById<TextView>(R.id.tv_name)
+                    tvName.text = item.name
+
+                    val edtValue = itemView.findViewById<EditText>(R.id.edt_value)
+                    edtValue.tag = item.item + item.key
+                }
 
                 childView.addView(itemView)
                 pos++
@@ -220,9 +237,33 @@ class MainFragment : Fragment() {
             }
 
             if (item.type == "select") {
-                val itemView = layoutInflater.inflate(R.layout.view_select_no_odos, null)
-                val tvName = itemView.findViewById<TextView>(R.id.tv_name)
-                tvName.text = item.name
+                val itemView: View
+                if (item.doubleEye) {
+                    itemView = layoutInflater.inflate(R.layout.view_select_odos, null)
+                    val tvNameOd = itemView.findViewById<TextView>(R.id.tv_name_od)
+                    val tvNameOs = itemView.findViewById<TextView>(R.id.tv_name_os)
+                    tvNameOd.text = item.name
+                    tvNameOs.text = item.name
+
+                    val tvValueOd = itemView.findViewById<TextView>(R.id.tv_value_od)
+                    val tvValueOs = itemView.findViewById<TextView>(R.id.tv_value_os)
+                    tvValueOd.tag = item.item+item.key+"od"
+                    tvValueOs.tag = item.item+item.key+"os"
+
+                    //onclick
+                    onSelectHandle(tvValueOd, item.optionList)
+                    onSelectHandle(tvValueOs, item.optionList)
+                } else {
+                    itemView = layoutInflater.inflate(R.layout.view_select_no_odos, null)
+                    val tvName = itemView.findViewById<TextView>(R.id.tv_name)
+                    tvName.text = item.name
+
+                    val tvValue = itemView.findViewById<TextView>(R.id.tv_value)
+                    tvValue.tag = item.item+item.key
+
+                    //onclick
+                    onSelectHandle(tvValue, item.optionList)
+                }
 
                 childView.addView(itemView)
                 pos++
@@ -298,6 +339,10 @@ class MainFragment : Fragment() {
                     .forResult(PictureConfig.CHOOSE_REQUEST)
             }
         }
+        if (comboItem.resultModule) {
+            val childView = layoutInflater.inflate(R.layout.view_result, binding.rootView, false)
+            binding.rootView.addView(childView)
+        }
         if (comboItem.remarkModule) {
             val childView = layoutInflater.inflate(R.layout.view_remark, binding.rootView, false)
             binding.rootView.addView(childView)
@@ -313,7 +358,7 @@ class MainFragment : Fragment() {
         val itemList = comboItem.items
         for (item in itemList) {
             if (item.type == "vision" || item.type == "sph" || item.type == "cyl" || item.type == "axis"
-                || item.type == "iop" || item.type == "pd" || item.type == "add"){
+                || item.type == "iop" || item.type == "pd" || item.type == "add" || item.type == "al"){
                 if (item.doubleEye) {
                     val edtValueOd = binding.rootView.findViewWithTag(item.item+item.key+"od") as EditText
                     val edtValueOs = binding.rootView.findViewWithTag(item.item+item.key+"os") as EditText
@@ -327,9 +372,20 @@ class MainFragment : Fragment() {
                 }
             }
             if (item.type == "radio"){
-                val rgValue = binding.rootView.findViewWithTag(item.item+item.key) as RadioGroup
-                val rbValue = rgValue.findViewById<RadioButton>(rgValue.checkedRadioButtonId)
-                dataObj.put(item.key, rbValue?.text?.toString() ?: "")
+                if (item.doubleEye) {
+                    val rgOdValue = binding.rootView.findViewWithTag(item.item + item.key+"od") as RadioGroup
+                    val rbOdValue = rgOdValue.findViewById<RadioButton>(rgOdValue.checkedRadioButtonId)
+                    val rgOsValue = binding.rootView.findViewWithTag(item.item + item.key+"os") as RadioGroup
+                    val rbOsValue = rgOsValue.findViewById<RadioButton>(rgOsValue.checkedRadioButtonId)
+                    val ods = JSONObject()
+                    ods.put("od", rbOdValue?.text?.toString() ?: "")
+                    ods.put("os", rbOsValue?.text?.toString() ?: "")
+                    dataObj.put(item.key, ods)
+                } else {
+                    val rgValue = binding.rootView.findViewWithTag(item.item + item.key) as RadioGroup
+                    val rbValue = rgValue.findViewById<RadioButton>(rgValue.checkedRadioButtonId)
+                    dataObj.put(item.key, rbValue?.text?.toString() ?: "")
+                }
             }
             if (item.type == "text"){
                 if (item.doubleEye) {
@@ -345,7 +401,17 @@ class MainFragment : Fragment() {
                 }
             }
             if (item.type == "select"){
-                //dataObj.put(item.key, binding.rootView.findd)
+                if (item.doubleEye) {
+                    val tvValueOd = binding.rootView.findViewWithTag(item.item+item.key+"od") as TextView
+                    val tvValueOs = binding.rootView.findViewWithTag(item.item+item.key+"os") as TextView
+                    val ods = JSONObject()
+                    ods.put("od", tvValueOd.text.toString())
+                    ods.put("os", tvValueOs.text.toString())
+                    dataObj.put(item.key, ods)
+                } else {
+                    val tvValue = binding.rootView.findViewWithTag(item.item+item.key) as TextView
+                    dataObj.put(item.key, tvValue.text.toString())
+                }
             }
         }
         jsonObj.put(comboItem.name, dataObj)
@@ -353,6 +419,18 @@ class MainFragment : Fragment() {
         LogUtils.e("-------$jsonObj")
     }
 
+
+
+    private fun onSelectHandle(tv: TextView, optionList: MutableList<String>?) {
+        tv.setOnClickListener {
+            MaterialDialog(requireContext()).show {
+                listItems(items = optionList) { dialog, index, text ->
+                    tv.text = text
+                }
+                lifecycleOwner(this@MainFragment)
+            }
+        }
+    }
 
     private fun uploadFile(filePath: String) {
         //viewModel.uploadFile(filePath, "1")
