@@ -50,7 +50,7 @@ class MainFragment : Fragment() {
         return binding.root
     }
 
-    private val comboItem = "完全矫正视力"
+    private val comboItem = "裂隙灯检查"
     private var comboItemList = mutableListOf<ComboItem>()
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -82,7 +82,8 @@ class MainFragment : Fragment() {
 
         var pos = -1
         for (item in itemList) {
-            if (item.type == "vision" || item.type == "sph" || item.type == "cyl" || item.type == "axis" || item.type == "iop") {
+            if (item.type == "vision" || item.type == "sph" || item.type == "cyl" || item.type == "axis"
+                || item.type == "iop" || item.type == "pd" || item.type == "add") {
                 val itemView: View
                 if (item.doubleEye) {
                     itemView = layoutInflater.inflate(R.layout.view_spe_odos, null)
@@ -111,14 +112,40 @@ class MainFragment : Fragment() {
                 }
             }
             if (item.type == "radio") {
-                val itemView = layoutInflater.inflate(R.layout.view_radio_no_odos, null)
-                val tvName = itemView.findViewById<TextView>(R.id.tv_name)
-                tvName.text = item.name
-                val rgView = itemView.findViewById<RadioGroup>(R.id.rg)
-                for(str in item.optionList!!) {
-                    val radioBtn = RadioButton(context)
-                    radioBtn.text = str
-                    rgView.addView(radioBtn)
+                val itemView: View
+                if (item.doubleEye) {
+                    itemView = layoutInflater.inflate(R.layout.view_radio_odos, null)
+                    val tvNameOd = itemView.findViewById<TextView>(R.id.tv_name_od)
+                    val tvNameOs = itemView.findViewById<TextView>(R.id.tv_name_os)
+                    tvNameOd.text = item.name
+                    tvNameOs.text = item.name
+
+                    val rgOdView = itemView.findViewById<RadioGroup>(R.id.rg_od)
+                    for (str in item.optionList!!) {
+                        val radioBtn = RadioButton(context)
+                        radioBtn.text = str
+                        rgOdView.addView(radioBtn)
+                    }
+                    rgOdView.tag = item.item + item.key
+
+                    val rgOsView = itemView.findViewById<RadioGroup>(R.id.rg_os)
+                    for (str in item.optionList!!) {
+                        val radioBtn = RadioButton(context)
+                        radioBtn.text = str
+                        rgOsView.addView(radioBtn)
+                    }
+                    rgOsView.tag = item.item + item.key
+                } else {
+                    itemView = layoutInflater.inflate(R.layout.view_radio_no_odos, null)
+                    val tvName = itemView.findViewById<TextView>(R.id.tv_name)
+                    tvName.text = item.name
+                    val rgView = itemView.findViewById<RadioGroup>(R.id.rg)
+                    for (str in item.optionList!!) {
+                        val radioBtn = RadioButton(context)
+                        radioBtn.text = str
+                        rgView.addView(radioBtn)
+                    }
+                    rgView.tag = item.item + item.key
                 }
 
                 childView.addView(itemView)
@@ -181,6 +208,9 @@ class MainFragment : Fragment() {
                 val itemView = layoutInflater.inflate(R.layout.view_text_no_odos, null)
                 val tvName = itemView.findViewById<TextView>(R.id.tv_name)
                 tvName.text = item.name
+
+                val edtValue = itemView.findViewById<EditText>(R.id.edt_value)
+                edtValue.tag = item.item+item.key
 
                 childView.addView(itemView)
                 pos++
@@ -282,7 +312,8 @@ class MainFragment : Fragment() {
         val comboItem = list.find { it.name == comboItem } ?: return
         val itemList = comboItem.items
         for (item in itemList) {
-            if (item.type == "vision" || item.type == "sph" || item.type == "cyl" || item.type == "axis" || item.type == "iop"){
+            if (item.type == "vision" || item.type == "sph" || item.type == "cyl" || item.type == "axis"
+                || item.type == "iop" || item.type == "pd" || item.type == "add"){
                 if (item.doubleEye) {
                     val edtValueOd = binding.rootView.findViewWithTag(item.item+item.key+"od") as EditText
                     val edtValueOs = binding.rootView.findViewWithTag(item.item+item.key+"os") as EditText
@@ -296,10 +327,22 @@ class MainFragment : Fragment() {
                 }
             }
             if (item.type == "radio"){
-                //dataObj.put(item.key, binding.rootView.findd)
+                val rgValue = binding.rootView.findViewWithTag(item.item+item.key) as RadioGroup
+                val rbValue = rgValue.findViewById<RadioButton>(rgValue.checkedRadioButtonId)
+                dataObj.put(item.key, rbValue?.text?.toString() ?: "")
             }
             if (item.type == "text"){
-                //dataObj.put(item.key, binding.rootView.findd)
+                if (item.doubleEye) {
+                    val edtValueOd = binding.rootView.findViewWithTag(item.item+item.key+"od") as EditText
+                    val edtValueOs = binding.rootView.findViewWithTag(item.item+item.key+"os") as EditText
+                    val ods = JSONObject()
+                    ods.put("od", edtValueOd.text.toString())
+                    ods.put("os", edtValueOs.text.toString())
+                    dataObj.put(item.key, ods)
+                } else {
+                    val edtValue = binding.rootView.findViewWithTag(item.item+item.key) as EditText
+                    dataObj.put(item.key, edtValue.text.toString())
+                }
             }
             if (item.type == "select"){
                 //dataObj.put(item.key, binding.rootView.findd)

@@ -10,53 +10,51 @@
         android:layout_height="wrap_content"
         android:orientation="horizontal"
         android:padding="16dp">
-
-        <LinearLayout
+        <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:paddingEnd="16dp"
             android:layout_weight="1">
             <TextView
                 android:id="@+id/tv_name_od"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_centerVertical="true"
                 android:textColor="@color/black"
                 android:textSize="17sp"
                 android:text="xx"/>
-            <EditText
-                android:id="@+id/edt_value_od"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:background="@null"
-                android:hint="请输入"
-                android:paddingStart="16dp"
-                android:textColor="@color/black"
-                android:textSize="17sp"
-                android:text=""/>
-        </LinearLayout>
 
-        <LinearLayout
+            <RadioGroup
+                android:id="@+id/rg_od"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentEnd="true"
+                android:layout_centerVertical="true"
+                android:orientation="horizontal">
+            </RadioGroup>
+        </RelativeLayout>
+        <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:paddingStart="16dp"
+            android:paddingEnd="16dp"
             android:layout_weight="1">
             <TextView
                 android:id="@+id/tv_name_os"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_centerVertical="true"
                 android:textColor="@color/black"
                 android:textSize="17sp"
                 android:text="xx"/>
-            <EditText
-                android:id="@+id/edt_value_os"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:hint="请输入"
-                android:paddingStart="16dp"
-                android:background="@null"
-                android:textColor="@color/black"
-                android:textSize="17sp"
-                android:text=""/>
-        </LinearLayout>
 
+            <RadioGroup
+                android:id="@+id/rg_os"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentEnd="true"
+                android:layout_centerVertical="true"
+                android:orientation="horizontal">
+            </RadioGroup>
+        </RelativeLayout>
     </LinearLayout>
 </layout>
