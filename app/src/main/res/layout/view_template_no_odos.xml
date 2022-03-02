@@ -10,23 +10,22 @@
         android:layout_height="wrap_content"
         android:orientation="vertical"
         android:padding="16dp">
-        <TextView
-            android:id="@+id/tv_name"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_centerVertical="true"
-            android:textColor="@color/black"
-            android:textSize="17sp"
-            android:text="xx"/>
-
         <LinearLayout
-            android:id="@+id/ll_array"
+            android:id="@+id/ll_template"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="8dp"
-            android:orientation="vertical">
-
+            android:gravity="center_vertical"
+            android:orientation="horizontal">
+            <TextView
+                android:id="@+id/tv_name"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:paddingEnd="16dp"
+                android:textColor="@color/black"
+                android:textSize="17sp"
+                android:text="xx"/>
         </LinearLayout>
+
     </LinearLayout>
 
 

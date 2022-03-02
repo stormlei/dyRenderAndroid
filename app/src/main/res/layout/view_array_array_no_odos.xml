@@ -9,21 +9,19 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"
-        android:padding="16dp">
+        android:paddingBottom="8dp"
+        android:paddingTop="8dp">
         <TextView
             android:id="@+id/tv_name"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_centerVertical="true"
             android:textColor="@color/black"
             android:textSize="17sp"
             android:text="xx"/>
-
         <com.qpsoft.checkrender.widget.AutoNextLineLinearLayout
             android:id="@+id/ll_array"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="8dp">
+            android:layout_height="wrap_content">
 
         </com.qpsoft.checkrender.widget.AutoNextLineLinearLayout>
     </LinearLayout>

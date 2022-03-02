@@ -9,6 +9,6 @@ data class CheckItem (
     val unit: String,
     val template: String,
     val optionList: MutableList<String>?,
-    val itemList: MutableList<Any>?,
+    val itemList: MutableList<CheckItem>?,
     val suffix: CheckItem?
 )

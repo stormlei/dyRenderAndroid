@@ -18,13 +18,11 @@ import com.blankj.utilcode.util.GsonUtils
 import com.blankj.utilcode.util.LogUtils
 import com.chad.library.adapter.base.BaseQuickAdapter
 import com.chad.library.adapter.base.viewholder.BaseViewHolder
-import com.google.gson.reflect.TypeToken
 import com.luck.picture.lib.PictureSelector
 import com.luck.picture.lib.config.PictureConfig
 import com.luck.picture.lib.config.PictureMimeType
 import com.qpsoft.checkrender.R
 import com.qpsoft.checkrender.common.Helper
-import com.qpsoft.checkrender.data.model.CheckItem
 import com.qpsoft.checkrender.data.model.ComboItem
 import com.qpsoft.checkrender.databinding.FooterUpFilesBinding
 import com.qpsoft.checkrender.databinding.FragmentMainBinding
@@ -71,7 +69,7 @@ class MainFragment : Fragment() {
     }
 
 
-    private val comboItem = "角膜接触镜试戴"
+    private val comboItem = "双眼视检查"
     private fun renderUI(list: MutableList<ComboItem>) {
         val comboItem = list.find { it.name == comboItem } ?: return
         when(comboItem.category) {
@@ -219,18 +217,88 @@ class MainFragment : Fragment() {
                 val iList = item.itemList
                 if (iList != null) {
                     for(it in iList) {
-                        val tt = GsonUtils.fromJson(GsonUtils.toJson(it), CheckItem::class.java)
-                        if (tt.type == "select") {
+                        if (it.type == "select") {
                             val sView = layoutInflater.inflate(R.layout.view_array_select_no_odos, null)
                             val tvName = sView.findViewById<TextView>(R.id.tv_name)
-                            tvName.text = tt.name
+                            tvName.text = it.name
+
+                            val tvValue = sView.findViewById<TextView>(R.id.tv_value)
+                            tvValue.tag = item.key+it.key
+
                             arrayView.addView(sView)
+
+                            onSelectHandle(tvValue, it.optionList)
                         }
-                        if (tt.type == "template") {
-                            val sView = layoutInflater.inflate(R.layout.view_array_select_no_odos, null)
-                            val tvName = sView.findViewById<TextView>(R.id.tv_name)
-                            tvName.text = tt.name
-                            arrayView.addView(sView)
+                        if (it.type == "template") {
+                            val llTemplate = layoutInflater.inflate(R.layout.view_array_template_no_odos, null) as LinearLayout
+
+                            val tvName = llTemplate.findViewById<TextView>(R.id.tv_name)
+                            tvName.text = it.name
+
+                            val str = it.template
+                            val separator = it.template.substring(0,1)
+                            val count = str.split("$separator ").size
+                            for (i in 0..count){
+                                val llContent = layoutInflater.inflate(R.layout.view_template_content, null)
+                                val tvSeparator = llContent.findViewById<TextView>(R.id.tv_separator)
+                                tvSeparator.text = separator
+
+                                val edtValue = llContent.findViewById<TextView>(R.id.edt_value)
+                                edtValue.tag = item.key+it.key+"key$i"
+
+                                llTemplate.addView(llContent)
+                            }
+
+                            arrayView.addView(llTemplate)
+                        }
+
+                        if (it.type == "array") {
+                            val aaView = layoutInflater.inflate(R.layout.view_array_array_no_odos, null) as LinearLayout
+                            val tvName = aaView.findViewById<TextView>(R.id.tv_name)
+                            tvName.text = it.name
+
+                            val array2View = aaView.findViewById<LinearLayout>(R.id.ll_array)
+
+                            val iList2 = it.itemList
+                            if (iList2 != null) {
+                                for(it2 in iList2) {
+                                    if (it2.type == "template") {
+                                        val llTemplate = layoutInflater.inflate(R.layout.view_array_template_no_odos, array2View, false) as LinearLayout
+
+                                        val tvName = llTemplate.findViewById<TextView>(R.id.tv_name)
+                                        tvName.text = it2.name
+
+                                        val str = it2.template
+                                        val separator = it2.template.substring(0,1)
+                                        val count = str.split("$separator ").size
+                                        for (i in 0..count){
+                                            val llContent = layoutInflater.inflate(R.layout.view_template_content, null)
+                                            val tvSeparator = llContent.findViewById<TextView>(R.id.tv_separator)
+                                            tvSeparator.text = separator
+
+                                            val edtValue = llContent.findViewById<TextView>(R.id.edt_value)
+                                            edtValue.tag = it.key+it2.key+"key$i"
+
+                                            llTemplate.addView(llContent)
+                                        }
+
+                                        array2View.addView(llTemplate)
+                                    }
+
+                                }
+                            }
+                            arrayView.addView(aaView)
+                        }
+
+                        if (it.type == "text") {
+                            val txtView = layoutInflater.inflate(R.layout.view_array_text_no_odos, null)
+                            val tvName = txtView.findViewById<TextView>(R.id.tv_name)
+                            tvName.text = it.name
+
+                            val edtValue = txtView.findViewById<TextView>(R.id.edt_value)
+                            edtValue.tag = item.key+it.key
+
+                            arrayView.addView(txtView)
                         }
                     }
                 }
@@ -247,6 +315,7 @@ class MainFragment : Fragment() {
                             radioBtn.text = str
                             rgView.addView(radioBtn)
                         }
+                        rgView.tag = item.key + suffixItem.key
 
                         itemView.addView(suffixView)
                     }
@@ -326,11 +395,24 @@ class MainFragment : Fragment() {
 
             if (item.type == "template") {
                 val itemView = layoutInflater.inflate(R.layout.view_template_no_odos, null) as LinearLayout
-                val tvName = itemView.findViewById<TextView>(R.id.tv_name)
+
+                val llTemplate = itemView.findViewById<LinearLayout>(R.id.ll_template)
+                val tvName = llTemplate.findViewById<TextView>(R.id.tv_name)
                 tvName.text = item.name
 
                 val str = item.template
+                val separator = item.template.substring(0,1)
+                val count = str.split("$separator ").size
+                for (i in 0..count){
+                    val llContent = layoutInflater.inflate(R.layout.view_template_content, null)
+                    val tvSeparator = llContent.findViewById<TextView>(R.id.tv_separator)
+                    tvSeparator.text = separator
 
+                    val edtValue = llContent.findViewById<TextView>(R.id.edt_value)
+                    edtValue.tag = item.item+item.key+"key$i"
+
+                    llTemplate.addView(llContent)
+                }
 
                 if (item.suffix != null) {
                     val suffixItem = item.suffix
@@ -344,6 +426,7 @@ class MainFragment : Fragment() {
                             radioBtn.text = str
                             rgView.addView(radioBtn)
                         }
+                        rgView.tag = item.key + suffixItem.key
 
                         itemView.addView(suffixView)
                     }
@@ -385,38 +468,34 @@ class MainFragment : Fragment() {
                         childView.addView(topView)
                         val iList = item.itemList
                         if (iList != null) {
-                            for(ii in iList) {
-                                val list = ii as MutableList<Any>
-                                for (it in list) {
-                                    val item = GsonUtils.fromJson(GsonUtils.toJson(it), CheckItem::class.java)
-                                    if (str == item.item) {
-                                        if (item.type == "text") {
-                                            val itemView: View
-                                            if (item.doubleEye) {
-                                                itemView = layoutInflater.inflate(R.layout.view_text_odos, null)
-                                                val tvNameOd = itemView.findViewById<TextView>(R.id.tv_name_od)
-                                                val tvNameOs = itemView.findViewById<TextView>(R.id.tv_name_os)
-                                                tvNameOd.text = item.name
-                                                tvNameOs.text = item.name
+                            for(it in iList) {
+                                if (str == it.item) {
+                                    if (it.type == "text") {
+                                        val itemView: View
+                                        if (it.doubleEye) {
+                                            itemView = layoutInflater.inflate(R.layout.view_text_odos, null)
+                                            val tvNameOd = itemView.findViewById<TextView>(R.id.tv_name_od)
+                                            val tvNameOs = itemView.findViewById<TextView>(R.id.tv_name_os)
+                                            tvNameOd.text = it.name
+                                            tvNameOs.text = it.name
 
-                                                val edtValueOd = itemView.findViewById<EditText>(R.id.edt_value_od)
-                                                val edtValueOs = itemView.findViewById<EditText>(R.id.edt_value_os)
-                                                edtValueOd.tag = item.item + item.key + "od"
-                                                edtValueOs.tag = item.item + item.key + "os"
-                                            } else {
-                                                itemView = layoutInflater.inflate(R.layout.view_text_no_odos, null)
-                                                val tvName = itemView.findViewById<TextView>(R.id.tv_name)
-                                                tvName.text = item.name
+                                            val edtValueOd = itemView.findViewById<EditText>(R.id.edt_value_od)
+                                            val edtValueOs = itemView.findViewById<EditText>(R.id.edt_value_os)
+                                            edtValueOd.tag = item.key + it.key + "od"
+                                            edtValueOs.tag = item.key + it.key + "os"
+                                        } else {
+                                            itemView = layoutInflater.inflate(R.layout.view_text_no_odos, null)
+                                            val tvName = itemView.findViewById<TextView>(R.id.tv_name)
+                                            tvName.text = it.name
 
-                                                val edtValue = itemView.findViewById<EditText>(R.id.edt_value)
-                                                edtValue.tag = item.item + item.key
-                                            }
+                                            val edtValue = itemView.findViewById<EditText>(R.id.edt_value)
+                                            edtValue.tag = item.key + it.key
+                                        }
 
-                                            topView.addView(itemView)
-                                            pos++
-                                            if (pos % 2 == 0) {
-                                                itemView.setBackgroundColor(resources.getColor(R.color.color_0ff))
-                                            }
+                                        topView.addView(itemView)
+                                        pos++
+                                        if (pos % 2 == 0) {
+                                            itemView.setBackgroundColor(resources.getColor(R.color.color_0ff))
                                         }
                                     }
                                 }
@@ -477,10 +556,6 @@ class MainFragment : Fragment() {
                     val rgValue = binding.rootView.findViewWithTag(item.item + item.key) as RadioGroup
                     val rbValue = rgValue.findViewById<RadioButton>(rgValue.checkedRadioButtonId)
                     dataObj.put(item.key, rbValue?.text?.toString() ?: "")
-
-                    if (item.itemList != null) {
-
-                    }
                 }
             }
             if (item.type == "text"){
@@ -508,6 +583,83 @@ class MainFragment : Fragment() {
                     val tvValue = binding.rootView.findViewWithTag(item.item+item.key) as TextView
                     dataObj.put(item.key, tvValue.text.toString())
                 }
+            }
+
+            if (item.type == "template"){
+                val str = item.template
+                val separator = item.template.substring(0,1)
+                val count = str.split("$separator ").size
+                val contentObj = JSONObject()
+                for (i in 0..count){
+                    val edtValue = binding.rootView.findViewWithTag(item.item+item.key+"key$i") as EditText
+                    contentObj.put("value$i", edtValue.text.toString())
+                }
+
+                if (item.suffix != null) {
+                    val suffixItem = item.suffix
+                    val rgValue = binding.rootView.findViewWithTag(item.key + suffixItem.key) as RadioGroup
+                    val rbValue = rgValue.findViewById<RadioButton>(rgValue.checkedRadioButtonId)
+                    contentObj.put(suffixItem.key, rbValue?.text?.toString() ?: "")
+                }
+
+                dataObj.put(item.key, contentObj)
+            }
+
+            if (item.type == "array"){
+                val contentObj = JSONObject()
+                val iList = item.itemList
+                if (iList != null) {
+                    for(it in iList) {
+                        if (it.type == "select") {
+                            val tvValue = binding.rootView.findViewWithTag(item.key+it.key) as TextView
+                            contentObj.put(it.key, tvValue.text.toString())
+                        }
+                        if (it.type == "template"){
+                            val str = it.template
+                            val separator = str.substring(0,1)
+                            val count = str.split("$separator ").size
+                            val ctObj = JSONObject()
+                            for (i in 0..count){
+                                val edtValue = binding.rootView.findViewWithTag(item.key+it.key+"key$i") as EditText
+                                ctObj.put("value$i", edtValue.text.toString())
+                            }
+                            contentObj.put(it.key, ctObj)
+                        }
+                        if (it.type == "text") {
+                            val edtValue = binding.rootView.findViewWithTag(item.key+it.key) as EditText
+                            contentObj.put(it.key, edtValue.text.toString())
+                        }
+
+                        if (it.type == "array") {
+                            val ccObj = JSONObject()
+                            val iList2 = it.itemList
+                            if (iList2 != null) {
+                                for(it2 in iList2) {
+                                    if (it2.type == "template") {
+                                        val str = it2.template
+                                        val separator = it2.template.substring(0,1)
+                                        val count = str.split("$separator ").size
+                                        val ctObj = JSONObject()
+                                        for (i in 0..count){
+                                            val edtValue = binding.rootView.findViewWithTag(it.key+it2.key+"key$i") as EditText
+                                            ctObj.put("value$i", edtValue.text.toString())
+                                        }
+                                        ccObj.put(it2.key, ctObj)
+                                    }
+                                }
+                            }
+                            contentObj.put(it.key, ccObj)
+                        }
+                    }
+                }
+                if (item.suffix != null) {
+                    val suffixItem = item.suffix
+                    val rgValue = binding.rootView.findViewWithTag(item.key + suffixItem.key) as RadioGroup
+                    val rbValue = rgValue.findViewById<RadioButton>(rgValue.checkedRadioButtonId)
+                    contentObj.put(suffixItem.key, rbValue?.text?.toString() ?: "")
+                }
+
+                dataObj.put(item.key, contentObj)
             }
         }
         jsonObj.put(comboItem.name, dataObj)
