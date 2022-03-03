@@ -14,7 +14,6 @@ import androidx.recyclerview.widget.RecyclerView
 import com.afollestad.materialdialogs.MaterialDialog
 import com.afollestad.materialdialogs.lifecycle.lifecycleOwner
 import com.afollestad.materialdialogs.list.listItems
-import com.blankj.utilcode.util.GsonUtils
 import com.blankj.utilcode.util.LogUtils
 import com.chad.library.adapter.base.BaseQuickAdapter
 import com.chad.library.adapter.base.viewholder.BaseViewHolder
@@ -28,6 +27,7 @@ import com.qpsoft.checkrender.databinding.FooterUpFilesBinding
 import com.qpsoft.checkrender.databinding.FragmentMainBinding
 import com.qpsoft.checkrender.utils.glide.GlideEngine
 import dagger.hilt.android.AndroidEntryPoint
+import org.json.JSONArray
 import org.json.JSONObject
 
 
@@ -59,6 +59,8 @@ class MainFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        getCheckItemData()
+
         binding.btn.setOnClickListener {
             renderUI(comboItemList)
         }
@@ -68,14 +70,29 @@ class MainFragment : Fragment() {
         }
     }
 
+    private val checkItemObj: JSONObject = JSONObject()
+    private fun getCheckItemData() {
+        val obj1 = JSONObject()
+        val obj11 = JSONObject()
+        obj11.put("od", "0.25")
+        obj11.put("os", "0.50")
+        obj1.put("远用裸眼视力", obj11)
+        obj1.put("双眼远视力", "0.75")
+        val obj31 = JSONObject()
+        obj31.put("od", "0.25")
+        obj31.put("os", "0.50")
+        obj1.put("近用裸眼视力", obj31)
+        obj1.put("双眼近视力", "0.25")
+        checkItemObj.put("裸眼视力", obj1)
+    }
 
-    private val comboItem = "裸眼视力"
+
+    private val comboItemStr = "角膜接触镜试戴"
     private fun renderUI(list: MutableList<ComboItem>) {
-        val comboItem = list.find { it.name == comboItem } ?: return
+        val comboItem = list.find { it.name == comboItemStr } ?: return
         when(comboItem.category) {
-            "normal" -> showNormal(comboItem)
+            "normal","special" -> showNormal(comboItem)
             "ok" -> showOk(comboItem)
-            "special" -> showSpecial(comboItem)
         }
         if (comboItem.fileModule) {
             val childView = layoutInflater.inflate(R.layout.view_files, binding.rootView, false)
@@ -147,6 +164,12 @@ class MainFragment : Fragment() {
                     val edtValueOs = itemView.findViewById<EditText>(R.id.edt_value_os)
                     edtValueOd.tag = item.item+item.key+"od"
                     edtValueOs.tag = item.item+item.key+"os"
+
+                    //show data
+                    if (!checkItemObj.isNull(item.item)) {
+                        edtValueOd.setText(checkItemObj.getJSONObject(item.item).getJSONObject(item.key).getString("od"))
+                        edtValueOs.setText(checkItemObj.getJSONObject(item.item).getJSONObject(item.key).getString("os"))
+                    }
                 } else {
                     itemView = layoutInflater.inflate(R.layout.view_spe_no_odos, null)
                     val tvName = itemView.findViewById<TextView>(R.id.tv_name)
@@ -154,6 +177,11 @@ class MainFragment : Fragment() {
 
                     val edtValue = itemView.findViewById<EditText>(R.id.edt_value)
                     edtValue.tag = item.item+item.key
+
+                    //show data
+                    if (!checkItemObj.isNull(item.item)) {
+                        edtValue.setText(checkItemObj.getJSONObject(item.item).getString(item.key))
+                    }
                 }
 
                 childView.addView(itemView)
@@ -341,6 +369,12 @@ class MainFragment : Fragment() {
                     val edtValueOs = itemView.findViewById<EditText>(R.id.edt_value_os)
                     edtValueOd.tag = item.item+item.key+"od"
                     edtValueOs.tag = item.item+item.key+"os"
+
+                    //show data
+                    if (!checkItemObj.isNull(item.item)) {
+                        edtValueOd.setText(checkItemObj.getJSONObject(item.item).getJSONObject(item.key).getString("od"))
+                        edtValueOs.setText(checkItemObj.getJSONObject(item.item).getJSONObject(item.key).getString("os"))
+                    }
                 } else {
                     itemView = layoutInflater.inflate(R.layout.view_text_no_odos, null)
                     val tvName = itemView.findViewById<TextView>(R.id.tv_name)
@@ -348,6 +382,11 @@ class MainFragment : Fragment() {
 
                     val edtValue = itemView.findViewById<EditText>(R.id.edt_value)
                     edtValue.tag = item.item + item.key
+
+                    //show data
+                    if (!checkItemObj.isNull(item.item)) {
+                        edtValue.setText(checkItemObj.getJSONObject(item.item).getString(item.key))
+                    }
                 }
 
                 childView.addView(itemView)
@@ -371,6 +410,12 @@ class MainFragment : Fragment() {
                     tvValueOd.tag = item.item+item.key+"od"
                     tvValueOs.tag = item.item+item.key+"os"
 
+                    //show data
+                    if (!checkItemObj.isNull(item.item)) {
+                        tvValueOd.text = checkItemObj.getJSONObject(item.item).getJSONObject(item.key).getString("od")
+                        tvValueOs.text = checkItemObj.getJSONObject(item.item).getJSONObject(item.key).getString("os")
+                    }
+
                     //onclick
                     onSelectHandle(tvValueOd, item.optionList)
                     onSelectHandle(tvValueOs, item.optionList)
@@ -381,6 +426,11 @@ class MainFragment : Fragment() {
 
                     val tvValue = itemView.findViewById<TextView>(R.id.tv_value)
                     tvValue.tag = item.item+item.key
+
+                    //show data
+                    if (!checkItemObj.isNull(item.item)) {
+                        tvValue.text = checkItemObj.getJSONObject(item.item).getString(item.key)
+                    }
 
                     //onclick
                     onSelectHandle(tvValue, item.optionList)
@@ -443,9 +493,10 @@ class MainFragment : Fragment() {
         binding.rootView.addView(childView)
     }
 
-
+    private val clickKeyList = mutableSetOf<String>()
+    private val clickObj = JSONObject()
     private fun showOk(comboItem: ComboItem) {
-        val childView = layoutInflater.inflate(R.layout.view_no_odos, binding.rootView, false) as LinearLayout
+        val childView = layoutInflater.inflate(R.layout.view_ok, binding.rootView, false) as LinearLayout
 
         val itemList = comboItem.items
         var pos = -1
@@ -462,10 +513,25 @@ class MainFragment : Fragment() {
                     rgView.addView(radioBtn)
 
                     radioBtn.setOnClickListener {
-                        val topView = layoutInflater.inflate(R.layout.view_ok_top_odos, null) as LinearLayout
-                        //val tvTitle = topView.findViewById<TextView>(R.id.tv_title)
-                        //tvTitle.text = str
-                        childView.addView(topView)
+                        pos = -1
+                        clickKeyList.add(str)
+                        var clickCount = if(!clickObj.isNull(str)) clickObj.getInt(str) else -1
+                        clickCount++
+                        clickObj.put(str, clickCount)
+                        val okItemView = layoutInflater.inflate(R.layout.view_ok_item_odos, childView, false) as LinearLayout
+                        val tvTitle = okItemView.findViewById<TextView>(R.id.tv_title)
+                        tvTitle.text = str
+
+                        val ivDelItem = okItemView.findViewById<ImageView>(R.id.iv_del_item)
+                        ivDelItem.setOnClickListener {
+                            childView.removeView(childView.findViewWithTag(str+clickCount))
+                            clickCount--
+                            clickObj.put(str, clickCount)
+                        }
+
+                        okItemView.tag = str+clickCount
+
+                        childView.addView(okItemView)
                         val iList = item.itemList
                         if (iList != null) {
                             for(it in iList) {
@@ -481,18 +547,18 @@ class MainFragment : Fragment() {
 
                                             val edtValueOd = itemView.findViewById<EditText>(R.id.edt_value_od)
                                             val edtValueOs = itemView.findViewById<EditText>(R.id.edt_value_os)
-                                            edtValueOd.tag = item.key + it.key + "od"
-                                            edtValueOs.tag = item.key + it.key + "os"
+                                            edtValueOd.tag = it.item + it.key + "od" + clickCount
+                                            edtValueOs.tag = it.item + it.key + "os" + clickCount
                                         } else {
                                             itemView = layoutInflater.inflate(R.layout.view_text_no_odos, null)
                                             val tvName = itemView.findViewById<TextView>(R.id.tv_name)
                                             tvName.text = it.name
 
                                             val edtValue = itemView.findViewById<EditText>(R.id.edt_value)
-                                            edtValue.tag = item.key + it.key
+                                            edtValue.tag = it.item + it.key + clickCount
                                         }
 
-                                        topView.addView(itemView)
+                                        okItemView.addView(itemView)
                                         pos++
                                         if (pos % 2 != 0) {
                                             itemView.setBackgroundColor(resources.getColor(R.color.color_9fc))
@@ -503,21 +569,16 @@ class MainFragment : Fragment() {
                         }
                     }
                 }
-                rgView.tag = item.item + item.key
 
                 childView.addView(itemView)
-                pos++
-                if (pos % 2 != 0) {
-                    itemView.setBackgroundColor(resources.getColor(R.color.color_9fc))
-                }
+//                pos++
+//                if (pos % 2 != 0) {
+//                    itemView.setBackgroundColor(resources.getColor(R.color.color_9fc))
+//                }
             }
         }
 
         binding.rootView.addView(childView)
-    }
-
-    private fun showSpecial(comboItem: ComboItem) {
-
     }
 
 
@@ -525,7 +586,18 @@ class MainFragment : Fragment() {
     private val jsonObj = JSONObject()
     private val dataObj = JSONObject()
     private fun submitData(list: MutableList<ComboItem>){
-        val comboItem = list.find { it.name == comboItem } ?: return
+        val comboItem = list.find { it.name == comboItemStr } ?: return
+        when(comboItem.category) {
+            "normal", "special" -> submitNormal(comboItem)
+            "ok" -> submitOk(comboItem)
+        }
+
+        jsonObj.put(comboItem.name, dataObj)
+
+        LogUtils.e("-------$jsonObj")
+    }
+
+    private fun submitNormal(comboItem: ComboItem) {
         val itemList = comboItem.items
         for (item in itemList) {
             if (item.type == "vision" || item.type == "sph" || item.type == "cyl" || item.type == "axis"
@@ -662,9 +734,42 @@ class MainFragment : Fragment() {
                 dataObj.put(item.key, contentObj)
             }
         }
-        jsonObj.put(comboItem.name, dataObj)
-
-        LogUtils.e("-------$jsonObj")
+    }
+    private fun submitOk(comboItem: ComboItem) {
+        val itemList = comboItem.items
+        for (item in itemList) {
+            if (item.type == "radio") {
+                for (str in clickKeyList) {
+                    val contentArray = JSONArray()
+                    val count = clickObj.getInt(str)
+                    for (ii in 0..count) {
+                        val contentObj = JSONObject()
+                        val iList = item.itemList
+                        if (iList != null) {
+                            for (it in iList) {
+                                if (str == it.item) {
+                                    if (it.type == "text") {
+                                        if (it.doubleEye) {
+                                            val edtValueOd = binding.rootView.findViewWithTag(it.item+it.key+"od"+ii) as EditText
+                                            val edtValueOs = binding.rootView.findViewWithTag(it.item+it.key+"os"+ii) as EditText
+                                            val ods = JSONObject()
+                                            ods.put("od", edtValueOd.text.toString())
+                                            ods.put("os", edtValueOs.text.toString())
+                                            contentObj.put(it.key, ods)
+                                        } else {
+                                            val edtValue = binding.rootView.findViewWithTag(it.item+it.key+ii) as EditText
+                                            contentObj.put(it.key, edtValue.text.toString())
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                        contentArray.put(contentObj)
+                    }
+                    dataObj.put(str, contentArray)
+                }
+            }
+        }
     }
 
 

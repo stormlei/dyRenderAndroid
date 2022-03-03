@@ -3,6 +3,7 @@
   <component name="DesignSurface">
     <option name="filePathToZoomLevelMap">
       <map>
+        <entry key="../../.gradle/caches/transforms-3/18c946a6b4293d902210f3843133e3ab/transformed/jetified-pictureselector-v2.7.3-rc06/res/drawable/picture_icon_black_delete.xml" value="0.3802083333333333" />
         <entry key="../../.gradle/caches/transforms-3/18c946a6b4293d902210f3843133e3ab/transformed/jetified-pictureselector-v2.7.3-rc06/res/drawable/picture_image_placeholder.xml" value="0.265625" />
         <entry key="app/src/main/res/drawable/bg_0ff_half_r12_shape.xml" value="0.29583333333333334" />
         <entry key="app/src/main/res/drawable/bg_0ff_halfr12_shape.xml" value="0.20833333333333334" />
@@ -30,6 +31,8 @@
         <entry key="app/src/main/res/layout/view_item_textarea.xml" value="0.2640625" />
         <entry key="app/src/main/res/layout/view_no_odos.xml" value="0.28802083333333334" />
         <entry key="app/src/main/res/layout/view_odos.xml" value="0.5" />
+        <entry key="app/src/main/res/layout/view_ok.xml" value="0.334375" />
+        <entry key="app/src/main/res/layout/view_ok_item_odos.xml" value="0.5" />
         <entry key="app/src/main/res/layout/view_ok_top_odos.xml" value="0.30364583333333334" />
         <entry key="app/src/main/res/layout/view_radio_no_odos.xml" value="0.3640625" />
         <entry key="app/src/main/res/layout/view_radio_odos.xml" value="0.290625" />
