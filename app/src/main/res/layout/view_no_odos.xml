@@ -12,6 +12,7 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="56dp"
         android:layout_marginEnd="56dp"
+        android:background="@drawable/bg_e6_r12_shape"
         android:orientation="vertical">
         <LinearLayout
             android:layout_width="match_parent"

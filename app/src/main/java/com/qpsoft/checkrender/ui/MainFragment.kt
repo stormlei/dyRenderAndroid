@@ -69,7 +69,7 @@ class MainFragment : Fragment() {
     }
 
 
-    private val comboItem = "双眼视检查"
+    private val comboItem = "裸眼视力"
     private fun renderUI(list: MutableList<ComboItem>) {
         val comboItem = list.find { it.name == comboItem } ?: return
         when(comboItem.category) {
@@ -82,7 +82,6 @@ class MainFragment : Fragment() {
             binding.rootView.addView(childView)
 
             val picList = mutableListOf<String>()
-            picList.add("ddddddd")
             val picAdapter = object: BaseQuickAdapter<String, BaseViewHolder>(R.layout.rv_files_item, picList) {
                 override fun convert(holder: BaseViewHolder, item: String) {
                     val ivFile = holder.getView<ImageView>(R.id.iv_file)
@@ -90,7 +89,7 @@ class MainFragment : Fragment() {
                 }
             }
             val rvFiles = childView.findViewById<RecyclerView>(R.id.rv_files)
-            rvFiles.layoutManager = GridLayoutManager(requireContext(), 3, RecyclerView.VERTICAL, false)
+            rvFiles.layoutManager = GridLayoutManager(requireContext(), 3)
             rvFiles.adapter = picAdapter
 
             //footer layout
@@ -160,7 +159,7 @@ class MainFragment : Fragment() {
                 childView.addView(itemView)
                 pos++
                 if (pos % 2 != 0) {
-                    itemView.setBackgroundColor(resources.getColor(R.color.color_0ff))
+                    itemView.setBackgroundColor(resources.getColor(R.color.color_9fc))
                 }
             }
             if (item.type == "radio") {
@@ -203,7 +202,7 @@ class MainFragment : Fragment() {
                 childView.addView(itemView)
                 pos++
                 if (pos % 2 != 0) {
-                    itemView.setBackgroundColor(resources.getColor(R.color.color_0ff))
+                    itemView.setBackgroundColor(resources.getColor(R.color.color_9fc))
                 }
             }
 
@@ -236,9 +235,9 @@ class MainFragment : Fragment() {
                             tvName.text = it.name
 
                             val str = it.template
-                            val separator = it.template.substring(0,1)
-                            val count = str.split("$separator ").size
-                            for (i in 0..count){
+                            val separator = str.substring(0,1)
+                            val count = str.substring(1).split(separator).size
+                            for (i in 0 until count){
                                 val llContent = layoutInflater.inflate(R.layout.view_template_content, null)
                                 val tvSeparator = llContent.findViewById<TextView>(R.id.tv_separator)
                                 tvSeparator.text = separator
@@ -263,15 +262,16 @@ class MainFragment : Fragment() {
                             if (iList2 != null) {
                                 for(it2 in iList2) {
                                     if (it2.type == "template") {
-                                        val llTemplate = layoutInflater.inflate(R.layout.view_array_template_no_odos, array2View, false) as LinearLayout
+                                        val llTemplate = layoutInflater.inflate(R.layout.view_array_array_template_no_odos, null) as LinearLayout
 
                                         val tvName = llTemplate.findViewById<TextView>(R.id.tv_name)
                                         tvName.text = it2.name
 
+
                                         val str = it2.template
-                                        val separator = it2.template.substring(0,1)
-                                        val count = str.split("$separator ").size
-                                        for (i in 0..count){
+                                        val separator = str.substring(0,1)
+                                        val count = str.substring(1).split(separator).size
+                                        for (i in 0 until count){
                                             val llContent = layoutInflater.inflate(R.layout.view_template_content, null)
                                             val tvSeparator = llContent.findViewById<TextView>(R.id.tv_separator)
                                             tvSeparator.text = separator
@@ -324,7 +324,7 @@ class MainFragment : Fragment() {
                 childView.addView(itemView)
                 pos++
                 if (pos % 2 != 0) {
-                    itemView.setBackgroundColor(resources.getColor(R.color.color_0ff))
+                    itemView.setBackgroundColor(resources.getColor(R.color.color_9fc))
                 }
             }
 
@@ -353,7 +353,7 @@ class MainFragment : Fragment() {
                 childView.addView(itemView)
                 pos++
                 if (pos % 2 != 0) {
-                    itemView.setBackgroundColor(resources.getColor(R.color.color_0ff))
+                    itemView.setBackgroundColor(resources.getColor(R.color.color_9fc))
                 }
             }
 
@@ -389,7 +389,7 @@ class MainFragment : Fragment() {
                 childView.addView(itemView)
                 pos++
                 if (pos % 2 != 0) {
-                    itemView.setBackgroundColor(resources.getColor(R.color.color_0ff))
+                    itemView.setBackgroundColor(resources.getColor(R.color.color_9fc))
                 }
             }
 
@@ -401,9 +401,9 @@ class MainFragment : Fragment() {
                 tvName.text = item.name
 
                 val str = item.template
-                val separator = item.template.substring(0,1)
-                val count = str.split("$separator ").size
-                for (i in 0..count){
+                val separator = str.substring(0,1)
+                val count = str.substring(1).split(separator).size
+                for (i in 0 until count){
                     val llContent = layoutInflater.inflate(R.layout.view_template_content, null)
                     val tvSeparator = llContent.findViewById<TextView>(R.id.tv_separator)
                     tvSeparator.text = separator
@@ -435,7 +435,7 @@ class MainFragment : Fragment() {
                 childView.addView(itemView)
                 pos++
                 if (pos % 2 != 0) {
-                    itemView.setBackgroundColor(resources.getColor(R.color.color_0ff))
+                    itemView.setBackgroundColor(resources.getColor(R.color.color_9fc))
                 }
             }
         }
@@ -494,8 +494,8 @@ class MainFragment : Fragment() {
 
                                         topView.addView(itemView)
                                         pos++
-                                        if (pos % 2 == 0) {
-                                            itemView.setBackgroundColor(resources.getColor(R.color.color_0ff))
+                                        if (pos % 2 != 0) {
+                                            itemView.setBackgroundColor(resources.getColor(R.color.color_9fc))
                                         }
                                     }
                                 }
@@ -508,7 +508,7 @@ class MainFragment : Fragment() {
                 childView.addView(itemView)
                 pos++
                 if (pos % 2 != 0) {
-                    itemView.setBackgroundColor(resources.getColor(R.color.color_0ff))
+                    itemView.setBackgroundColor(resources.getColor(R.color.color_9fc))
                 }
             }
         }
@@ -587,10 +587,10 @@ class MainFragment : Fragment() {
 
             if (item.type == "template"){
                 val str = item.template
-                val separator = item.template.substring(0,1)
-                val count = str.split("$separator ").size
+                val separator = str.substring(0,1)
+                val count = str.substring(1).split(separator).size
                 val contentObj = JSONObject()
-                for (i in 0..count){
+                for (i in 0 until count){
                     val edtValue = binding.rootView.findViewWithTag(item.item+item.key+"key$i") as EditText
                     contentObj.put("value$i", edtValue.text.toString())
                 }
@@ -617,9 +617,9 @@ class MainFragment : Fragment() {
                         if (it.type == "template"){
                             val str = it.template
                             val separator = str.substring(0,1)
-                            val count = str.split("$separator ").size
+                            val count = str.substring(1).split(separator).size
                             val ctObj = JSONObject()
-                            for (i in 0..count){
+                            for (i in 0 until count){
                                 val edtValue = binding.rootView.findViewWithTag(item.key+it.key+"key$i") as EditText
                                 ctObj.put("value$i", edtValue.text.toString())
                             }
@@ -637,10 +637,10 @@ class MainFragment : Fragment() {
                                 for(it2 in iList2) {
                                     if (it2.type == "template") {
                                         val str = it2.template
-                                        val separator = it2.template.substring(0,1)
-                                        val count = str.split("$separator ").size
+                                        val separator = str.substring(0,1)
+                                        val count = str.substring(1).split(separator).size
                                         val ctObj = JSONObject()
-                                        for (i in 0..count){
+                                        for (i in 0 until count){
                                             val edtValue = binding.rootView.findViewWithTag(it.key+it2.key+"key$i") as EditText
                                             ctObj.put("value$i", edtValue.text.toString())
                                         }
