@@ -7,6 +7,7 @@ import androidx.lifecycle.ViewModelProvider
 import android.os.Bundle
 import android.view.*
 import android.widget.*
+import androidx.core.view.get
 import androidx.fragment.app.Fragment
 import androidx.databinding.DataBindingUtil
 import androidx.recyclerview.widget.GridLayoutManager
@@ -74,27 +75,62 @@ class MainFragment : Fragment() {
     private fun getCheckItemData() {
         val obj1 = JSONObject()
 
-        val array = JSONArray()
 
         val obj11 = JSONObject()
-        obj11.put("试戴品牌", "11")
 
-        val odsObj = JSONObject()
-        odsObj.put("od", "3333")
-        odsObj.put("os", "4444")
-        obj11.put("直径", odsObj)
+        obj11.put("远", "2222")
+        obj11.put("近", "11111")
+        obj11.put("抑制/复现", "复现")
 
-        obj11.put("镜片颜色", "333")
 
-        array.put(obj11)
-        obj1.put("软性角膜接触镜试戴", array)
+        val obj22 = JSONObject()
+        obj22.put("OD", "5")
+        obj22.put("OS", "6")
+        obj22.put("OU", "88")
+        obj22.put("方法", "移近法")
+
+        val obj33 = JSONObject()
+        obj33.put("value0", "15")
+        obj33.put("value1", "16")
+        obj33.put("方法", "48")
+
+        obj1.put("主导眼", "左眼")
+        obj1.put("WORTH 4 DOT", obj11)
+        obj1.put("调节幅度(AMP)", obj22)
+        obj1.put("集合近点NPC", obj33)
+        obj1.put("BCC", "333")
+        val obj44 = JSONObject()
+        obj44.put("value0", "15")
+        obj44.put("value1", "16")
+        obj44.put("方法", "箱灯")
+        obj1.put("集合近点NPC", obj44)
+        obj1.put("调节功能", "333")
+
+        val obj55 = JSONObject()
+        val obj551 = JSONObject()
+        obj551.put("value0", "1")
+        obj551.put("value1", "2")
+        obj55.put("远距离水平斜位检查", obj551)
+
+        val obj66 = JSONObject()
+        val obj553 = JSONObject()
+        obj553.put("value0", "1")
+        obj553.put("value1", "2")
+        obj553.put("value2", "3")
+        obj66.put("BI", obj553)
+        val obj554 = JSONObject()
+        obj554.put("value0", "1")
+        obj554.put("value1", "2")
+        obj66.put("BO", obj554)
+        obj55.put("远距离水平聚散力检查", obj66)
+        obj1.put("立体视", obj55)
 
         checkItemObj.put(comboItemStr, obj1)
         LogUtils.e("------$checkItemObj")
     }
 
 
-    private val comboItemStr = "角膜接触镜试戴"
+    private val comboItemStr = "双眼视检查"
     private fun renderUI(list: MutableList<ComboItem>) {
         val comboItem = list.find { it.name == comboItemStr } ?: return
         when(comboItem.category) {
@@ -214,6 +250,18 @@ class MainFragment : Fragment() {
                     }
                     rgOdView.tag = item.item + item.key+"od"
 
+                    //show data
+                    if (!checkItemObj.isNull(item.item)) {
+                        if (!checkItemObj.getJSONObject(item.item).isNull(item.key)) {
+                            for (ii in 0 until rgOdView.childCount) {
+                                val rb = rgOdView[ii] as RadioButton
+                                if (rb.text.toString() == checkItemObj.getJSONObject(item.item).getJSONObject(item.key).getString("od")) {
+                                    rb.isChecked = true
+                                }
+                            }
+                        }
+                    }
+
                     val rgOsView = itemView.findViewById<RadioGroup>(R.id.rg_os)
                     for (str in item.optionList!!) {
                         val radioBtn = RadioButton(context)
@@ -221,6 +269,18 @@ class MainFragment : Fragment() {
                         rgOsView.addView(radioBtn)
                     }
                     rgOsView.tag = item.item + item.key+"os"
+
+                    //show data
+                    if (!checkItemObj.isNull(item.item)) {
+                        if (!checkItemObj.getJSONObject(item.item).isNull(item.key)) {
+                            for (ii in 0 until rgOsView.childCount) {
+                                val rb = rgOsView[ii] as RadioButton
+                                if (rb.text.toString() == checkItemObj.getJSONObject(item.item).getJSONObject(item.key).getString("os")) {
+                                    rb.isChecked = true
+                                }
+                            }
+                        }
+                    }
                 } else {
                     itemView = layoutInflater.inflate(R.layout.view_radio_no_odos, null)
                     val tvName = itemView.findViewById<TextView>(R.id.tv_name)
@@ -232,6 +292,18 @@ class MainFragment : Fragment() {
                         rgView.addView(radioBtn)
                     }
                     rgView.tag = item.item + item.key
+
+                    //show data
+                    if (!checkItemObj.isNull(item.item)) {
+                        if (!checkItemObj.getJSONObject(item.item).isNull(item.key)) {
+                            for (ii in 0 until rgView.childCount) {
+                                val rb = rgView[ii] as RadioButton
+                                if (rb.text.toString() == checkItemObj.getJSONObject(item.item).getString(item.key)) {
+                                    rb.isChecked = true
+                                }
+                            }
+                        }
+                    }
                 }
 
                 childView.addView(itemView)
@@ -259,6 +331,13 @@ class MainFragment : Fragment() {
                             val tvValue = sView.findViewById<TextView>(R.id.tv_value)
                             tvValue.tag = item.key+it.key
 
+                            //show data
+                            if (!checkItemObj.isNull(item.item)) {
+                                if (!checkItemObj.getJSONObject(item.item).getJSONObject(item.key).isNull(it.key)) {
+                                    tvValue.text = checkItemObj.getJSONObject(item.item).getJSONObject(item.key).getString(it.key)
+                                }
+                            }
+
                             arrayView.addView(sView)
 
                             onSelectHandle(tvValue, it.optionList)
@@ -277,8 +356,17 @@ class MainFragment : Fragment() {
                                 val tvSeparator = llContent.findViewById<TextView>(R.id.tv_separator)
                                 tvSeparator.text = separator
 
-                                val edtValue = llContent.findViewById<TextView>(R.id.edt_value)
+                                val edtValue = llContent.findViewById<EditText>(R.id.edt_value)
                                 edtValue.tag = item.key+it.key+"key$i"
+
+                                //show data
+                                if (!checkItemObj.isNull(item.item)) {
+                                    if (!checkItemObj.getJSONObject(item.item).isNull(item.key)) {
+                                        if (!checkItemObj.getJSONObject(item.item).getJSONObject(item.key).isNull(it.key)) {
+                                            edtValue.setText(checkItemObj.getJSONObject(item.item).getJSONObject(item.key).getJSONObject(it.key).getString("value$i"))
+                                        }
+                                    }
+                                }
 
                                 llTemplate.addView(llContent)
                             }
@@ -311,8 +399,19 @@ class MainFragment : Fragment() {
                                             val tvSeparator = llContent.findViewById<TextView>(R.id.tv_separator)
                                             tvSeparator.text = separator
 
-                                            val edtValue = llContent.findViewById<TextView>(R.id.edt_value)
+                                            val edtValue = llContent.findViewById<EditText>(R.id.edt_value)
                                             edtValue.tag = it.key+it2.key+"key$i"
+
+                                            //show data
+                                            if (!checkItemObj.isNull(item.item)) {
+                                                if (!checkItemObj.getJSONObject(item.item).isNull(item.key)) {
+                                                    if (!checkItemObj.getJSONObject(item.item).getJSONObject(item.key).isNull(it.key)) {
+                                                        if (!checkItemObj.getJSONObject(item.item).getJSONObject(item.key).getJSONObject(it.key).isNull(it2.key)) {
+                                                            edtValue.setText(checkItemObj.getJSONObject(item.item).getJSONObject(item.key).getJSONObject(it.key).getJSONObject(it2.key).getString("value$i"))
+                                                        }
+                                                    }
+                                                }
+                                            }
 
                                             llTemplate.addView(llContent)
                                         }
@@ -330,8 +429,15 @@ class MainFragment : Fragment() {
                             val tvName = txtView.findViewById<TextView>(R.id.tv_name)
                             tvName.text = it.name
 
-                            val edtValue = txtView.findViewById<TextView>(R.id.edt_value)
+                            val edtValue = txtView.findViewById<EditText>(R.id.edt_value)
                             edtValue.tag = item.key+it.key
+
+                            //show data
+                            if (!checkItemObj.isNull(item.item)) {
+                                if (!checkItemObj.getJSONObject(item.item).isNull(item.key)) {
+                                    edtValue.setText(checkItemObj.getJSONObject(item.item).getJSONObject(item.key).getString(it.key))
+                                }
+                            }
 
                             arrayView.addView(txtView)
                         }
@@ -351,6 +457,18 @@ class MainFragment : Fragment() {
                             rgView.addView(radioBtn)
                         }
                         rgView.tag = item.key + suffixItem.key
+
+                        //show data
+                        if (!checkItemObj.isNull(item.item)) {
+                            if (!checkItemObj.getJSONObject(item.item).isNull(item.key)) {
+                                for (ii in 0 until rgView.childCount) {
+                                    val rb = rgView[ii] as RadioButton
+                                    if (rb.text.toString() == checkItemObj.getJSONObject(item.item).getJSONObject(item.key).getString(suffixItem.key)) {
+                                        rb.isChecked = true
+                                    }
+                                }
+                            }
+                        }
 
                         itemView.addView(suffixView)
                     }
@@ -392,7 +510,9 @@ class MainFragment : Fragment() {
 
                     //show data
                     if (!checkItemObj.isNull(item.item)) {
-                        edtValue.setText(checkItemObj.getJSONObject(item.item).getString(item.key))
+                        if (!checkItemObj.getJSONObject(item.item).isNull(item.key)) {
+                            edtValue.setText(checkItemObj.getJSONObject(item.item).getString(item.key))
+                        }
                     }
                 }
 
@@ -436,7 +556,9 @@ class MainFragment : Fragment() {
 
                     //show data
                     if (!checkItemObj.isNull(item.item)) {
-                        tvValue.text = checkItemObj.getJSONObject(item.item).getString(item.key)
+                        if (!checkItemObj.getJSONObject(item.item).isNull(item.key)) {
+                            tvValue.text = checkItemObj.getJSONObject(item.item).getString(item.key)
+                        }
                     }
 
                     //onclick
@@ -465,8 +587,15 @@ class MainFragment : Fragment() {
                     val tvSeparator = llContent.findViewById<TextView>(R.id.tv_separator)
                     tvSeparator.text = separator
 
-                    val edtValue = llContent.findViewById<TextView>(R.id.edt_value)
+                    val edtValue = llContent.findViewById<EditText>(R.id.edt_value)
                     edtValue.tag = item.item+item.key+"key$i"
+
+                    //show data
+                    if (!checkItemObj.isNull(item.item)) {
+                        if (!checkItemObj.getJSONObject(item.item).isNull(item.key)) {
+                            edtValue.setText(checkItemObj.getJSONObject(item.item).getJSONObject(item.key).getString("value$i"))
+                        }
+                    }
 
                     llTemplate.addView(llContent)
                 }
@@ -484,6 +613,18 @@ class MainFragment : Fragment() {
                             rgView.addView(radioBtn)
                         }
                         rgView.tag = item.key + suffixItem.key
+
+                        //show data
+                        if (!checkItemObj.isNull(item.item)) {
+                            if (!checkItemObj.getJSONObject(item.item).isNull(item.key)) {
+                                for (ii in 0 until rgView.childCount) {
+                                    val rb = rgView[ii] as RadioButton
+                                    if (rb.text.toString() == checkItemObj.getJSONObject(item.item).getJSONObject(item.key).getString(suffixItem.key)) {
+                                        rb.isChecked = true
+                                    }
+                                }
+                            }
+                        }
 
                         itemView.addView(suffixView)
                     }
@@ -509,7 +650,7 @@ class MainFragment : Fragment() {
         var pos = -1
         for (item in itemList) {
             if (item.type == "radio") {
-                val itemView = layoutInflater.inflate(R.layout.view_radio_no_odos, null)
+                val itemView = layoutInflater.inflate(R.layout.view_ok_radio_no_odos, null)
                 childView.addView(itemView)
                 val tvName = itemView.findViewById<TextView>(R.id.tv_name)
                 tvName.text = item.name
@@ -584,70 +725,72 @@ class MainFragment : Fragment() {
 
 
                      // handle data
-                    val ciObj = checkItemObj.getJSONObject(item.item)
-                    if (!ciObj.isNull(str)) {
-                        val array = ciObj.getJSONArray(str)
-                        for (index in 1..array.length()) {
-                            pos = -1
-                            clickKeyList.add(str)
-                            var clickCount = if(!clickObj.isNull(str)) clickObj.getInt(str) else -1
-                            clickCount++
-                            clickObj.put(str, clickCount)
-                            val okItemView = layoutInflater.inflate(R.layout.view_ok_item_odos, childView, false) as LinearLayout
-                            val tvTitle = okItemView.findViewById<TextView>(R.id.tv_title)
-                            tvTitle.text = str
-
-                            val ivDelItem = okItemView.findViewById<ImageView>(R.id.iv_del_item)
-                            ivDelItem.setOnClickListener {
-                                childView.removeView(childView.findViewWithTag(str+clickCount))
-                                clickCount--
+                    if (!checkItemObj.isNull(item.item)){
+                        val ciObj = checkItemObj.getJSONObject(item.item)
+                        if (!ciObj.isNull(str)) {
+                            val array = ciObj.getJSONArray(str)
+                            for (index in 1..array.length()) {
+                                pos = -1
+                                clickKeyList.add(str)
+                                var clickCount = if(!clickObj.isNull(str)) clickObj.getInt(str) else -1
+                                clickCount++
                                 clickObj.put(str, clickCount)
-                            }
+                                val okItemView = layoutInflater.inflate(R.layout.view_ok_item_odos, childView, false) as LinearLayout
+                                val tvTitle = okItemView.findViewById<TextView>(R.id.tv_title)
+                                tvTitle.text = str
 
-                            okItemView.tag = str+clickCount
+                                val ivDelItem = okItemView.findViewById<ImageView>(R.id.iv_del_item)
+                                ivDelItem.setOnClickListener {
+                                    childView.removeView(childView.findViewWithTag(str+clickCount))
+                                    clickCount--
+                                    clickObj.put(str, clickCount)
+                                }
 
-                            childView.addView(okItemView)
-                            val iList = item.itemList
-                            if (iList != null) {
-                                for(it in iList) {
-                                    if (str == it.item) {
-                                        if (it.type == "text") {
-                                            val itemView: View
-                                            if (it.doubleEye) {
-                                                itemView = layoutInflater.inflate(R.layout.view_text_odos, null)
-                                                val tvNameOd = itemView.findViewById<TextView>(R.id.tv_name_od)
-                                                val tvNameOs = itemView.findViewById<TextView>(R.id.tv_name_os)
-                                                tvNameOd.text = it.name
-                                                tvNameOs.text = it.name
+                                okItemView.tag = str+clickCount
 
-                                                val edtValueOd = itemView.findViewById<EditText>(R.id.edt_value_od)
-                                                val edtValueOs = itemView.findViewById<EditText>(R.id.edt_value_os)
-                                                edtValueOd.tag = it.item + it.key + "od" + clickCount
-                                                edtValueOs.tag = it.item + it.key + "os" + clickCount
+                                childView.addView(okItemView)
+                                val iList = item.itemList
+                                if (iList != null) {
+                                    for(it in iList) {
+                                        if (str == it.item) {
+                                            if (it.type == "text") {
+                                                val itemView: View
+                                                if (it.doubleEye) {
+                                                    itemView = layoutInflater.inflate(R.layout.view_text_odos, null)
+                                                    val tvNameOd = itemView.findViewById<TextView>(R.id.tv_name_od)
+                                                    val tvNameOs = itemView.findViewById<TextView>(R.id.tv_name_os)
+                                                    tvNameOd.text = it.name
+                                                    tvNameOs.text = it.name
 
-                                                //show data
-                                                if (!array.getJSONObject(clickCount).isNull(it.key)) {
-                                                    edtValueOd.setText(array.getJSONObject(clickCount).getJSONObject(it.key).getString("od"))
-                                                    edtValueOs.setText(array.getJSONObject(clickCount).getJSONObject(it.key).getString("os"))
+                                                    val edtValueOd = itemView.findViewById<EditText>(R.id.edt_value_od)
+                                                    val edtValueOs = itemView.findViewById<EditText>(R.id.edt_value_os)
+                                                    edtValueOd.tag = it.item + it.key + "od" + clickCount
+                                                    edtValueOs.tag = it.item + it.key + "os" + clickCount
+
+                                                    //show data
+                                                    if (!array.getJSONObject(clickCount).isNull(it.key)) {
+                                                        edtValueOd.setText(array.getJSONObject(clickCount).getJSONObject(it.key).getString("od"))
+                                                        edtValueOs.setText(array.getJSONObject(clickCount).getJSONObject(it.key).getString("os"))
+                                                    }
+                                                } else {
+                                                    itemView = layoutInflater.inflate(R.layout.view_text_no_odos, null)
+                                                    val tvName = itemView.findViewById<TextView>(R.id.tv_name)
+                                                    tvName.text = it.name
+
+                                                    val edtValue = itemView.findViewById<EditText>(R.id.edt_value)
+                                                    edtValue.tag = it.item + it.key + clickCount
+
+                                                    //show data
+                                                    if (!array.getJSONObject(clickCount).isNull(it.key)) {
+                                                        edtValue.setText(array.getJSONObject(clickCount).getString(it.key))
+                                                    }
                                                 }
-                                            } else {
-                                                itemView = layoutInflater.inflate(R.layout.view_text_no_odos, null)
-                                                val tvName = itemView.findViewById<TextView>(R.id.tv_name)
-                                                tvName.text = it.name
 
-                                                val edtValue = itemView.findViewById<EditText>(R.id.edt_value)
-                                                edtValue.tag = it.item + it.key + clickCount
-
-                                                //show data
-                                                if (!array.getJSONObject(clickCount).isNull(it.key)) {
-                                                    edtValue.setText(array.getJSONObject(clickCount).getString(it.key))
+                                                okItemView.addView(itemView)
+                                                pos++
+                                                if (pos % 2 != 0) {
+                                                    itemView.setBackgroundColor(resources.getColor(R.color.color_9fc))
                                                 }
-                                            }
-
-                                            okItemView.addView(itemView)
-                                            pos++
-                                            if (pos % 2 != 0) {
-                                                itemView.setBackgroundColor(resources.getColor(R.color.color_9fc))
                                             }
                                         }
                                     }
