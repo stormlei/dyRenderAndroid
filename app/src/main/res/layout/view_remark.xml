@@ -22,7 +22,7 @@
             android:text="备注："
             />
         <EditText
-            android:id="@+id/ed_mark"
+            android:id="@+id/edt_remark"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:padding="12dp"

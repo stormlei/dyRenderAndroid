@@ -22,7 +22,7 @@
             android:text="检查结果："
             />
         <EditText
-            android:id="@+id/ed_mark"
+            android:id="@+id/edt_result"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:padding="12dp"

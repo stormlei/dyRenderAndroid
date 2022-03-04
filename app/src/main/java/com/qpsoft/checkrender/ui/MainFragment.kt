@@ -125,17 +125,18 @@ class MainFragment : Fragment() {
         obj55.put("远距离水平聚散力检查", obj66)
         obj1.put("立体视", obj55)
 
-        checkItemObj.put(comboItemStr, obj1)
+        //checkItemObj.put(comboItemStr, obj1)
         LogUtils.e("------$checkItemObj")
     }
 
 
-    private val comboItemStr = "双眼视检查"
+    private val comboItemStr = "电脑验光"
     private fun renderUI(list: MutableList<ComboItem>) {
         val comboItem = list.find { it.name == comboItemStr } ?: return
         when(comboItem.category) {
-            "normal","special" -> showNormal(comboItem)
+            "normal", -> showNormal(comboItem)
             "ok" -> showOk(comboItem)
+            "special" -> showSpecial(comboItem)
         }
         if (comboItem.fileModule) {
             val childView = layoutInflater.inflate(R.layout.view_files, binding.rootView, false)
@@ -244,7 +245,7 @@ class MainFragment : Fragment() {
 
                     val rgOdView = itemView.findViewById<RadioGroup>(R.id.rg_od)
                     for (str in item.optionList!!) {
-                        val radioBtn = RadioButton(context)
+                        val radioBtn = layoutInflater.inflate(R.layout.view_rb, null) as RadioButton
                         radioBtn.text = str
                         rgOdView.addView(radioBtn)
                     }
@@ -264,7 +265,7 @@ class MainFragment : Fragment() {
 
                     val rgOsView = itemView.findViewById<RadioGroup>(R.id.rg_os)
                     for (str in item.optionList!!) {
-                        val radioBtn = RadioButton(context)
+                        val radioBtn = layoutInflater.inflate(R.layout.view_rb, null) as RadioButton
                         radioBtn.text = str
                         rgOsView.addView(radioBtn)
                     }
@@ -287,7 +288,7 @@ class MainFragment : Fragment() {
                     tvName.text = item.name
                     val rgView = itemView.findViewById<RadioGroup>(R.id.rg)
                     for (str in item.optionList!!) {
-                        val radioBtn = RadioButton(context)
+                        val radioBtn = layoutInflater.inflate(R.layout.view_rb, null) as RadioButton
                         radioBtn.text = str
                         rgView.addView(radioBtn)
                     }
@@ -452,7 +453,7 @@ class MainFragment : Fragment() {
                         tvName.text = suffixItem.name
                         val rgView = suffixView.findViewById<RadioGroup>(R.id.rg)
                         for(str in suffixItem.optionList!!) {
-                            val radioBtn = RadioButton(context)
+                            val radioBtn = layoutInflater.inflate(R.layout.view_rb, null) as RadioButton
                             radioBtn.text = str
                             rgView.addView(radioBtn)
                         }
@@ -608,7 +609,7 @@ class MainFragment : Fragment() {
                         tvName.text = suffixItem.name
                         val rgView = suffixView.findViewById<RadioGroup>(R.id.rg)
                         for(str in suffixItem.optionList!!) {
-                            val radioBtn = RadioButton(context)
+                            val radioBtn = layoutInflater.inflate(R.layout.view_rb, null) as RadioButton
                             radioBtn.text = str
                             rgView.addView(radioBtn)
                         }
@@ -657,7 +658,7 @@ class MainFragment : Fragment() {
                 val rgView = itemView.findViewById<RadioGroup>(R.id.rg)
 
                 for (str in item.optionList!!) {
-                    val radioBtn = RadioButton(context)
+                    val radioBtn = layoutInflater.inflate(R.layout.view_ok_rb, null) as RadioButton
                     radioBtn.text = str
                     rgView.addView(radioBtn)
 
@@ -705,11 +706,6 @@ class MainFragment : Fragment() {
 
                                             val edtValue = itemView.findViewById<EditText>(R.id.edt_value)
                                             edtValue.tag = it.item + it.key + clickCount
-
-                                            //show data
-                                            if (!checkItemObj.isNull(it.item)) {
-                                                edtValue.setText(checkItemObj.getJSONArray(it.item).getJSONObject(clickCount).getString(it.key))
-                                            }
                                         }
 
                                         okItemView.addView(itemView)
@@ -805,15 +801,39 @@ class MainFragment : Fragment() {
         binding.rootView.addView(childView)
     }
 
+    private fun showSpecial(comboItem: ComboItem) {
+        val childView = layoutInflater.inflate(R.layout.view_no_odos, binding.rootView, false) as LinearLayout
+        val tvTitle = childView.findViewById<TextView>(R.id.tv_title)
+        tvTitle.text = comboItem.name
 
+        val contentView= layoutInflater.inflate(R.layout.view_special_content, null) as EditText
+        contentView.tag = comboItem.name
+
+        childView.addView(contentView)
+
+        binding.rootView.addView(childView)
+    }
 
     private val jsonObj = JSONObject()
     private val dataObj = JSONObject()
     private fun submitData(list: MutableList<ComboItem>){
         val comboItem = list.find { it.name == comboItemStr } ?: return
         when(comboItem.category) {
-            "normal", "special" -> submitNormal(comboItem)
+            "normal" -> submitNormal(comboItem)
             "ok" -> submitOk(comboItem)
+            "special" -> submitSpecial(comboItem)
+        }
+
+        if (comboItem.fileModule) {
+            dataObj.put("files", "")
+        }
+        if (comboItem.resultModule) {
+            val edtResult = binding.rootView.findViewById<EditText>(R.id.edt_result)
+            dataObj.put("result", edtResult.text.toString().trim())
+        }
+        if (comboItem.remarkModule) {
+            val edtRemark = binding.rootView.findViewById<EditText>(R.id.edt_remark)
+            dataObj.put("remark", edtRemark.text.toString().trim())
         }
 
         jsonObj.put(comboItem.name, dataObj)
@@ -959,6 +979,7 @@ class MainFragment : Fragment() {
             }
         }
     }
+
     private fun submitOk(comboItem: ComboItem) {
         val itemList = comboItem.items
         for (item in itemList) {
@@ -994,6 +1015,11 @@ class MainFragment : Fragment() {
                 }
             }
         }
+    }
+
+    private fun submitSpecial(comboItem: ComboItem) {
+        val edtValue = binding.rootView.findViewWithTag(comboItem.name) as EditText
+        dataObj.put(comboItem.name, edtValue.text.toString().trim())
     }
 
 

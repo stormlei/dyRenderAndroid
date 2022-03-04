@@ -34,6 +34,7 @@
         <entry key="app/src/main/res/layout/view_ok.xml" value="0.334375" />
         <entry key="app/src/main/res/layout/view_ok_item_odos.xml" value="0.5" />
         <entry key="app/src/main/res/layout/view_ok_radio_no_odos.xml" value="0.23072916666666668" />
+        <entry key="app/src/main/res/layout/view_ok_rb.xml" value="0.22083333333333333" />
         <entry key="app/src/main/res/layout/view_ok_top_odos.xml" value="0.30364583333333334" />
         <entry key="app/src/main/res/layout/view_radio_no_odos.xml" value="0.3640625" />
         <entry key="app/src/main/res/layout/view_radio_odos.xml" value="0.290625" />
@@ -44,6 +45,7 @@
         <entry key="app/src/main/res/layout/view_select_odos.xml" value="0.253125" />
         <entry key="app/src/main/res/layout/view_spe_no_odos.xml" value="0.290625" />
         <entry key="app/src/main/res/layout/view_spe_odos.xml" value="0.290625" />
+        <entry key="app/src/main/res/layout/view_special_content.xml" value="0.28541666666666665" />
         <entry key="app/src/main/res/layout/view_suffix_radio_no_odos.xml" value="0.3333333333333333" />
         <entry key="app/src/main/res/layout/view_template_content.xml" value="0.18489583333333334" />
         <entry key="app/src/main/res/layout/view_template_no_odos.xml" value="0.309375" />
