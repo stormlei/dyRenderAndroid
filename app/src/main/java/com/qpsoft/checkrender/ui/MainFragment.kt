@@ -90,8 +90,8 @@ class MainFragment : Fragment() {
         obj22.put("方法", "移近法")
 
         val obj33 = JSONObject()
-        obj33.put("value0", "15")
-        obj33.put("value1", "16")
+        obj33.put("key0", "15")
+        obj33.put("key1", "16")
         obj33.put("方法", "48")
 
         obj1.put("主导眼", "左眼")
@@ -100,27 +100,27 @@ class MainFragment : Fragment() {
         obj1.put("集合近点NPC", obj33)
         obj1.put("BCC", "333")
         val obj44 = JSONObject()
-        obj44.put("value0", "15")
-        obj44.put("value1", "16")
+        obj44.put("key0", "15")
+        obj44.put("key1", "16")
         obj44.put("方法", "箱灯")
         obj1.put("集合近点NPC", obj44)
         obj1.put("调节功能", "333")
 
         val obj55 = JSONObject()
         val obj551 = JSONObject()
-        obj551.put("value0", "1")
-        obj551.put("value1", "2")
+        obj551.put("key0", "1")
+        obj551.put("key1", "2")
         obj55.put("远距离水平斜位检查", obj551)
 
         val obj66 = JSONObject()
         val obj553 = JSONObject()
-        obj553.put("value0", "1")
-        obj553.put("value1", "2")
-        obj553.put("value2", "3")
+        obj553.put("key0", "1")
+        obj553.put("key1", "2")
+        obj553.put("key2", "3")
         obj66.put("BI", obj553)
         val obj554 = JSONObject()
-        obj554.put("value0", "1")
-        obj554.put("value1", "2")
+        obj554.put("key0", "1")
+        obj554.put("key1", "2")
         obj66.put("BO", obj554)
         obj55.put("远距离水平聚散力检查", obj66)
         obj1.put("立体视", obj55)
@@ -363,7 +363,7 @@ class MainFragment : Fragment() {
                                 if (!checkItemObj.isNull(item.item)) {
                                     if (!checkItemObj.getJSONObject(item.item).isNull(item.key)) {
                                         if (!checkItemObj.getJSONObject(item.item).getJSONObject(item.key).isNull(it.key)) {
-                                            edtValue.setText(checkItemObj.getJSONObject(item.item).getJSONObject(item.key).getJSONObject(it.key).getString("value$i"))
+                                            edtValue.setText(checkItemObj.getJSONObject(item.item).getJSONObject(item.key).getJSONObject(it.key).getString("key$i"))
                                         }
                                     }
                                 }
@@ -407,7 +407,7 @@ class MainFragment : Fragment() {
                                                 if (!checkItemObj.getJSONObject(item.item).isNull(item.key)) {
                                                     if (!checkItemObj.getJSONObject(item.item).getJSONObject(item.key).isNull(it.key)) {
                                                         if (!checkItemObj.getJSONObject(item.item).getJSONObject(item.key).getJSONObject(it.key).isNull(it2.key)) {
-                                                            edtValue.setText(checkItemObj.getJSONObject(item.item).getJSONObject(item.key).getJSONObject(it.key).getJSONObject(it2.key).getString("value$i"))
+                                                            edtValue.setText(checkItemObj.getJSONObject(item.item).getJSONObject(item.key).getJSONObject(it.key).getJSONObject(it2.key).getString("key$i"))
                                                         }
                                                     }
                                                 }
@@ -593,7 +593,7 @@ class MainFragment : Fragment() {
                     //show data
                     if (!checkItemObj.isNull(item.item)) {
                         if (!checkItemObj.getJSONObject(item.item).isNull(item.key)) {
-                            edtValue.setText(checkItemObj.getJSONObject(item.item).getJSONObject(item.key).getString("value$i"))
+                            edtValue.setText(checkItemObj.getJSONObject(item.item).getJSONObject(item.key).getString("key$i"))
                         }
                     }
 
@@ -888,7 +888,7 @@ class MainFragment : Fragment() {
                 val contentObj = JSONObject()
                 for (i in 0 until count){
                     val edtValue = binding.rootView.findViewWithTag(item.item+item.key+"key$i") as EditText
-                    contentObj.put("value$i", edtValue.text.toString())
+                    contentObj.put("key$i", edtValue.text.toString())
                 }
 
                 if (item.suffix != null) {
@@ -917,7 +917,7 @@ class MainFragment : Fragment() {
                             val ctObj = JSONObject()
                             for (i in 0 until count){
                                 val edtValue = binding.rootView.findViewWithTag(item.key+it.key+"key$i") as EditText
-                                ctObj.put("value$i", edtValue.text.toString())
+                                ctObj.put("key$i", edtValue.text.toString())
                             }
                             contentObj.put(it.key, ctObj)
                         }
@@ -938,7 +938,7 @@ class MainFragment : Fragment() {
                                         val ctObj = JSONObject()
                                         for (i in 0 until count){
                                             val edtValue = binding.rootView.findViewWithTag(it.key+it2.key+"key$i") as EditText
-                                            ctObj.put("value$i", edtValue.text.toString())
+                                            ctObj.put("key$i", edtValue.text.toString())
                                         }
                                         ccObj.put(it2.key, ctObj)
                                     }
