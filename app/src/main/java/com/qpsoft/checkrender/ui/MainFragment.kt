@@ -125,12 +125,12 @@ class MainFragment : Fragment() {
         obj55.put("远距离水平聚散力检查", obj66)
         obj1.put("立体视", obj55)
 
-        //checkItemObj.put(comboItemStr, obj1)
+        checkItemObj.put(comboItemStr, obj1)
         LogUtils.e("------$checkItemObj")
     }
 
 
-    private val comboItemStr = "电脑验光"
+    private val comboItemStr = "双眼视检查"
     private fun renderUI(list: MutableList<ComboItem>) {
         val comboItem = list.find { it.name == comboItemStr } ?: return
         when(comboItem.category) {
@@ -816,6 +816,7 @@ class MainFragment : Fragment() {
 
     private val jsonObj = JSONObject()
     private val dataObj = JSONObject()
+    private val fileList = mutableListOf<String>()
     private fun submitData(list: MutableList<ComboItem>){
         val comboItem = list.find { it.name == comboItemStr } ?: return
         when(comboItem.category) {
@@ -825,7 +826,7 @@ class MainFragment : Fragment() {
         }
 
         if (comboItem.fileModule) {
-            dataObj.put("files", "")
+            dataObj.put("files", fileList.joinToString(","))
         }
         if (comboItem.resultModule) {
             val edtResult = binding.rootView.findViewById<EditText>(R.id.edt_result)
